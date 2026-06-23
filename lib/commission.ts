@@ -1,10 +1,18 @@
 /**
- * Commission engine — Top Agent Realty
- * Pure, dependency-free calculation logic. Validated against real closed deals.
+ * Commission engine — Top Agent Realty (3-way split)
  *
- * The math: gross = price × rate → less referral & concessions → split between
- * agent and brokerage (chosen by source + agent plan) → less royalty/E&O/compliance
- * (for team agents) → net to agent.
+ * Money flow per deal:
+ *   Gross = Price × Rate
+ *     − Zillow / lead referral (off the top, on referral/Zillow deals)
+ *     − Concessions
+ *   = Commissionable, which splits between the Agent and Charles ("Doctors"):
+ *       Agent share   = commissionable × agentSplit%
+ *       Charles share = the remainder
+ *   Net to Agent   = agent share   − agent deductions (cap, royalty, E&O, compliance, dues, other) + bonus
+ *   Net to Charles = charles share − charles deductions (cap, royalty, other)
+ *   Net to Brokerage = everything that was deducted from both sides
+ *                    = commissionable − net to agent − net to charles
+ *                    (the pool of caps, compliance fees, monthly dues, E&O, royalties, deductions)
  */
 
 export type Tier = "team" | "independent" | "owner";
@@ -17,12 +25,10 @@ export interface Agent {
   tier: Tier;
   /** % the agent keeps on their own (SOI / self-generated) deals */
   baseSplit: number;
-  /** % the agent keeps on company-provided leads (Zillow etc.); null = no company-lead deals */
+  /** % the agent keeps on company-provided leads (Zillow etc.); null = none */
   zillowSplit: number | null;
   office?: string;
-  /** annual cap amount in $, 0 = no cap */
   cap?: number;
-  /** $ already paid toward cap this year */
   capPaid?: number;
 }
 
@@ -34,28 +40,29 @@ export interface Source {
 export interface DealInput {
   agent: Agent;
   source: Source;
-  /** sale price in $ (ignored if grossOverride is provided) */
   price: number;
-  /** commission rate %, e.g. 3 */
   commissionPct: number;
-  /** optional: set the gross commission directly instead of price × rate */
   grossOverride?: number | null;
-  /** referral paid out, % off the top */
+  /** Zillow / lead referral taken off the top, % of gross */
   referralPct?: number;
-  /** seller concessions in $ */
   concessions?: number;
-  /** bonus added to the agent in $ */
+  /** bonus added to the agent */
   bonus?: number;
-  /** override the auto-selected split %; null/undefined = auto */
+  /** agent's split % of the commissionable amount; null = auto from agent + source */
   splitOverride?: number | null;
-  /** royalty % charged on the agent's share (team agents) */
-  royaltyPct?: number;
-  /** flat E&O fee in $ */
-  eoFee?: number;
-  /** flat compliance fee in $ */
+
+  // ----- Agent-side deductions (all go to the brokerage pool) -----
+  agentCap?: number;
+  agentRoyalty?: number;
+  agentEO?: number;
   complianceFee?: number;
-  /** cap handling: "auto" uses the agent's balance, "capped" forces 100%, "none" ignores */
-  capMode?: "auto" | "capped" | "none";
+  monthlyDues?: number;
+  agentDeductions?: number;
+
+  // ----- Charles-side deductions (go to the brokerage pool) -----
+  charlesCap?: number;
+  charlesRoyalty?: number;
+  charlesDeductions?: number;
 }
 
 export interface Statement {
@@ -63,50 +70,56 @@ export interface Statement {
   referral: number;
   concessions: number;
   commissionable: number;
-  splitPct: number;
+
+  agentSplitPct: number;
   agentShare: number;
-  brokerageShare: number;
-  royalty: number;
-  eoFee: number;
+  charlesShare: number;
+
+  // line items
+  agentCap: number;
+  agentRoyalty: number;
+  agentEO: number;
   complianceFee: number;
-  bonus: number;
+  monthlyDues: number;
   agentDeductions: number;
+  agentDeductTotal: number;
+
+  charlesCap: number;
+  charlesRoyalty: number;
+  charlesDeductions: number;
+  charlesDeductTotal: number;
+
+  bonus: number;
+
+  // the three buckets
   netToAgent: number;
-  toBrokerage: number;
-  capped: boolean;
-  capRemaining: number;
-  note: string;
+  netToCharles: number;
+  netToBrokerage: number;
 }
 
-/** Decide which split % applies for an agent + source, before any override. */
+/** Agent's split % for an agent + source, before any override. */
 export function autoSplit(agent: Agent, source: Source): number {
   if (agent.tier === "independent") return 100;
   if (agent.tier === "owner") return 0;
   if (source.category === "company") {
     return agent.zillowSplit != null ? agent.zillowSplit : agent.baseSplit;
   }
-  // self-generated or referral source → agent's base/SOI split
-  return agent.baseSplit;
+  return agent.baseSplit; // self-generated or referral source
 }
 
-const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
+const r2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
 
-/** Compute a full commission statement from a deal. */
+/** Compute the 3-way commission statement. */
 export function calculate(input: DealInput): Statement {
   const {
-    agent,
-    source,
-    price,
-    commissionPct,
+    agent, source, price, commissionPct,
     grossOverride = null,
     referralPct = 0,
     concessions = 0,
     bonus = 0,
     splitOverride = null,
-    royaltyPct = 0,
-    eoFee = 0,
-    complianceFee = 0,
-    capMode = "auto",
+    agentCap = 0, agentRoyalty = 0, agentEO = 0, complianceFee = 0, monthlyDues = 0, agentDeductions = 0,
+    charlesCap = 0, charlesRoyalty = 0, charlesDeductions = 0,
   } = input;
 
   const gross =
@@ -117,51 +130,35 @@ export function calculate(input: DealInput): Statement {
   const referral = gross * (referralPct / 100);
   const commissionable = gross - referral - concessions;
 
-  // cap handling
-  const capRemaining = Math.max((agent.cap || 0) - (agent.capPaid || 0), 0);
-  let capped = false;
-  let note = "";
-  if (capMode === "capped") {
-    capped = true;
-    note = "Marked capped — agent keeps 100%.";
-  } else if (capMode === "auto" && agent.tier === "team" && (agent.cap || 0) > 0) {
-    if (capRemaining <= 0) {
-      capped = true;
-      note = "Agent has met cap — keeping 100%.";
-    } else {
-      note = `Cap remaining: $${capRemaining.toFixed(2)}.`;
-    }
-  }
+  const agentSplitPct = splitOverride != null ? splitOverride : autoSplit(agent, source);
+  const agentShare = commissionable * (agentSplitPct / 100);
+  const charlesShare = commissionable - agentShare;
 
-  const baseSplit = splitOverride != null ? splitOverride : autoSplit(agent, source);
-  const splitPct = capped ? 100 : baseSplit;
+  const agentDeductTotal = agentCap + agentRoyalty + agentEO + complianceFee + monthlyDues + agentDeductions;
+  const charlesDeductTotal = charlesCap + charlesRoyalty + charlesDeductions;
 
-  const agentShare = commissionable * (splitPct / 100);
-  const brokerageShare = commissionable - agentShare;
-
-  const royalty = agentShare * (royaltyPct / 100);
-  const agentDeductions = royalty + eoFee + complianceFee;
-  const netToAgent = agentShare - agentDeductions + bonus;
-  const toBrokerage = brokerageShare + royalty + eoFee + complianceFee;
+  const netToAgent = agentShare - agentDeductTotal + bonus;
+  const netToCharles = charlesShare - charlesDeductTotal;
+  // Brokerage gets the remainder (the pool of all deductions, less the bonus paid out to the agent).
+  const netToBrokerage = commissionable - netToAgent - netToCharles;
 
   return {
-    gross: round2(gross),
-    referral: round2(referral),
-    concessions: round2(concessions),
-    commissionable: round2(commissionable),
-    splitPct,
-    agentShare: round2(agentShare),
-    brokerageShare: round2(brokerageShare),
-    royalty: round2(royalty),
-    eoFee: round2(eoFee),
-    complianceFee: round2(complianceFee),
-    bonus: round2(bonus),
-    agentDeductions: round2(agentDeductions),
-    netToAgent: round2(netToAgent),
-    toBrokerage: round2(toBrokerage),
-    capped,
-    capRemaining: round2(capRemaining),
-    note,
+    gross: r2(gross),
+    referral: r2(referral),
+    concessions: r2(concessions),
+    commissionable: r2(commissionable),
+    agentSplitPct,
+    agentShare: r2(agentShare),
+    charlesShare: r2(charlesShare),
+    agentCap: r2(agentCap), agentRoyalty: r2(agentRoyalty), agentEO: r2(agentEO),
+    complianceFee: r2(complianceFee), monthlyDues: r2(monthlyDues), agentDeductions: r2(agentDeductions),
+    agentDeductTotal: r2(agentDeductTotal),
+    charlesCap: r2(charlesCap), charlesRoyalty: r2(charlesRoyalty), charlesDeductions: r2(charlesDeductions),
+    charlesDeductTotal: r2(charlesDeductTotal),
+    bonus: r2(bonus),
+    netToAgent: r2(netToAgent),
+    netToCharles: r2(netToCharles),
+    netToBrokerage: r2(netToBrokerage),
   };
 }
 
