@@ -7,6 +7,8 @@ export interface Context {
   email: string;
   brokerageId: string;
   brokerageName: string;
+  role: string;     // owner | transaction_coordinator | accountant | agent
+  status: string;   // active | pending
 }
 
 interface AgentRow {
@@ -21,32 +23,35 @@ const rowToAgent = (r: AgentRow): Agent => ({
   office: r.office ?? "", cap: Number(r.cap), capPaid: Number(r.cap_paid),
 });
 
-/** Get the signed-in user's brokerage, creating + seeding one on first login. */
+/** Resolve the signed-in user's brokerage + role, bootstrapping or joining as needed. */
 export async function getContext(): Promise<Context | null> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data: memberships } = await supabase
-    .from("memberships").select("brokerage_id, brokerages(name)").limit(1);
+  const defaultName = (user.email?.split("@")[1]?.split(".")[0] || "My") + " Brokerage";
+  const { data, error } = await supabase.rpc("ensure_membership", { p_default_name: defaultName });
+  if (error) return null;
+  const m = (Array.isArray(data) ? data[0] : data) as { brokerage_id: string; role: string; status: string } | undefined;
+  if (!m) return null;
 
-  let brokerageId: string | undefined = memberships?.[0]?.brokerage_id;
-  let brokerageName = "My Brokerage";
+  let brokerageName = defaultName;
+  const { data: b } = await supabase.from("brokerages").select("name").eq("id", m.brokerage_id).single();
+  if (b?.name) brokerageName = b.name;
 
-  if (!brokerageId) {
-    const defaultName = (user.email?.split("@")[1]?.split(".")[0] || "My") + " Brokerage";
-    const { data: newId, error } = await supabase.rpc("create_brokerage", { p_name: defaultName });
-    if (error || !newId) return null;
-    brokerageId = newId as string;
-    brokerageName = defaultName;
-    await seedDefaults(brokerageId);
-  } else {
-    const rel = memberships?.[0]?.brokerages as { name?: string } | { name?: string }[] | null;
-    brokerageName = (Array.isArray(rel) ? rel[0]?.name : rel?.name) || brokerageName;
+  // Seed defaults for a brand-new owner brokerage (only when it has no agents yet).
+  if (m.role === "owner" && m.status === "active") {
+    const { count } = await supabase.from("agents").select("id", { count: "exact", head: true }).eq("brokerage_id", m.brokerage_id);
+    if ((count ?? 0) === 0) await seedDefaults(m.brokerage_id);
   }
 
-  return { userId: user.id, email: user.email ?? "", brokerageId, brokerageName };
+  return {
+    userId: user.id, email: user.email ?? "",
+    brokerageId: m.brokerage_id, brokerageName, role: m.role, status: m.status,
+  };
 }
+
+export const isOwner = (ctx: Context | null) => ctx?.role === "owner" && ctx?.status === "active";
 
 async function seedDefaults(brokerageId: string) {
   const supabase = await createClient();
@@ -60,6 +65,21 @@ async function seedDefaults(brokerageId: string) {
   await supabase.from("sources").insert(
     DEFAULT_SOURCES.map((s) => ({ brokerage_id: brokerageId, name: s.name, category: s.category }))
   );
+}
+
+export interface Member { id: string; email: string; role: string; status: string; created_at: string; isSelf: boolean; }
+
+export async function getMembers(): Promise<Member[]> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data } = await supabase
+    .from("memberships")
+    .select("id, email, role, status, created_at, user_id")
+    .order("created_at");
+  type Row = { id: string; email: string | null; role: string; status: string; created_at: string; user_id: string };
+  return ((data as Row[] | null) ?? []).map((r) => ({
+    id: r.id, email: r.email ?? "—", role: r.role, status: r.status, created_at: r.created_at, isSelf: r.user_id === user?.id,
+  }));
 }
 
 export async function getAgents(): Promise<Agent[]> {
