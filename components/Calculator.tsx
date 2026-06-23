@@ -15,10 +15,7 @@ export interface SavePayload {
 }
 
 export default function Calculator({
-  agents,
-  sources,
-  brokerageName = "Top Agent Realty",
-  onSave,
+  agents, sources, brokerageName = "Top Agent Realty", onSave,
 }: {
   agents: Agent[];
   sources: Source[];
@@ -39,10 +36,18 @@ export default function Calculator({
   const [referralPct, setReferralPct] = useState(0);
   const [concessions, setConcessions] = useState(0);
   const [bonus, setBonus] = useState(0);
-  const [royaltyPct, setRoyaltyPct] = useState(0);
-  const [eoFee, setEoFee] = useState(75);
+  // agent deductions
+  const [agentCap, setAgentCap] = useState(0);
+  const [agentRoyalty, setAgentRoyalty] = useState(0);
+  const [agentEO, setAgentEO] = useState(75);
   const [complianceFee, setComplianceFee] = useState(0);
-  const [capMode, setCapMode] = useState<"auto" | "capped" | "none">("auto");
+  const [monthlyDues, setMonthlyDues] = useState(0);
+  const [agentDeductions, setAgentDeductions] = useState(0);
+  // charles deductions
+  const [charlesCap, setCharlesCap] = useState(0);
+  const [charlesRoyalty, setCharlesRoyalty] = useState(0);
+  const [charlesDeductions, setCharlesDeductions] = useState(0);
+
   const [saving, setSaving] = useState(false);
   const [flash, setFlash] = useState("");
 
@@ -50,30 +55,20 @@ export default function Calculator({
   const source = sources[Math.min(sourceIdx, sources.length - 1)] ?? sources[0];
   const computedAutoSplit = agent && source ? autoSplit(agent, source) : 100;
 
-  const dealCore = useMemo(
-    () => ({
-      price,
-      commissionPct,
-      grossOverride: grossOverride === "" ? null : parseFloat(grossOverride),
-      referralPct,
-      concessions,
-      bonus,
-      splitOverride: splitAuto ? null : splitManual,
-      royaltyPct,
-      eoFee,
-      complianceFee,
-      capMode,
-    }),
-    [price, commissionPct, grossOverride, referralPct, concessions, bonus, splitAuto, splitManual, royaltyPct, eoFee, complianceFee, capMode]
-  );
+  const core = useMemo(() => ({
+    price, commissionPct,
+    grossOverride: grossOverride === "" ? null : parseFloat(grossOverride),
+    referralPct, concessions, bonus,
+    splitOverride: splitAuto ? null : splitManual,
+    agentCap, agentRoyalty, agentEO, complianceFee, monthlyDues, agentDeductions,
+    charlesCap, charlesRoyalty, charlesDeductions,
+  }), [price, commissionPct, grossOverride, referralPct, concessions, bonus, splitAuto, splitManual,
+    agentCap, agentRoyalty, agentEO, complianceFee, monthlyDues, agentDeductions, charlesCap, charlesRoyalty, charlesDeductions]);
 
-  const s = useMemo(
-    () => calculate({ agent, source, ...dealCore }),
-    [agent, source, dealCore]
-  );
+  const s = useMemo(() => calculate({ agent, source, ...core }), [agent, source, core]);
 
-  const statementText = () =>
-    [
+  const statementText = () => {
+    const L = [
       `${brokerageName} — Commission Statement`,
       `Date: ${closeDate}`,
       `Agent: ${agent?.name}`,
@@ -85,15 +80,16 @@ export default function Calculator({
       s.referral > 0 ? `Less referral:     -${money(s.referral)}` : "",
       s.concessions > 0 ? `Less concessions:  -${money(s.concessions)}` : "",
       `Commissionable:    ${money(s.commissionable)}`,
-      `Agent split (${s.splitPct}%): ${money(s.agentShare)}`,
-      s.royalty > 0 ? `Less royalty:      -${money(s.royalty)}` : "",
-      s.eoFee > 0 ? `Less E&O:          -${money(s.eoFee)}` : "",
-      s.complianceFee > 0 ? `Less compliance:   -${money(s.complianceFee)}` : "",
-      s.bonus > 0 ? `Plus bonus:        +${money(s.bonus)}` : "",
-      `----------------------------------`,
+      ``,
+      `Agent split (${s.agentSplitPct}%): ${money(s.agentShare)}`,
+      `Charles share:     ${money(s.charlesShare)}`,
+      ``,
       `NET TO AGENT:      ${money(s.netToAgent)}`,
-      `To brokerage:      ${money(s.toBrokerage)}`,
-    ].filter(Boolean).join("\n");
+      `NET TO CHARLES:    ${money(s.netToCharles)}`,
+      `NET TO BROKERAGE:  ${money(s.netToBrokerage)}`,
+    ].filter(Boolean);
+    return L.join("\n");
+  };
 
   const copy = () => { navigator.clipboard.writeText(statementText()); setFlash("Copied"); setTimeout(() => setFlash(""), 1500); };
   const email = () => {
@@ -103,14 +99,15 @@ export default function Calculator({
   const doSave = async () => {
     if (!onSave) return;
     setSaving(true);
-    const res = await onSave({
-      agentName: agent.name, property: address, client, side, sourceName: source.name, closeDate,
-      input: dealCore, result: s,
-    });
+    const res = await onSave({ agentName: agent.name, property: address, client, side, sourceName: source.name, closeDate, input: core, result: s });
     setSaving(false);
     setFlash(res.ok ? "Saved to history" : (res.message || "Save failed"));
     setTimeout(() => setFlash(""), 2000);
   };
+
+  const numIn = (val: number, set: (n: number) => void, step = "1") => (
+    <input type="number" step={step} value={val} onChange={(e) => set(+e.target.value)} />
+  );
 
   return (
     <div className="grid">
@@ -137,7 +134,6 @@ export default function Calculator({
           <div className="hint">
             <span className={`pill ${agent.tier}`}>{agent.tier}</span>{" "}
             Base split <b>{agent.baseSplit}%</b> · Zillow split <b>{agent.zillowSplit == null ? "—" : agent.zillowSplit + "%"}</b>
-            {agent.office ? ` · ${agent.office}` : ""}
           </div>
         )}
         <div className="row">
@@ -154,14 +150,14 @@ export default function Calculator({
           <div><label>Closing date</label><input type="date" value={closeDate} onChange={(e) => setCloseDate(e.target.value)} /></div>
         </div>
         <div className="row">
-          <div><label>Sale price ($)</label><input type="number" value={price} onChange={(e) => setPrice(+e.target.value)} /></div>
-          <div><label>Commission rate (%)</label><input type="number" step="0.05" value={commissionPct} onChange={(e) => setCommissionPct(+e.target.value)} /></div>
+          <div><label>Sale price ($)</label>{numIn(price, setPrice, "1000")}</div>
+          <div><label>Commission rate (%)</label>{numIn(commissionPct, setCommissionPct, "0.05")}</div>
         </div>
         <label>Gross commission override ($) <span className="muted">— optional</span></label>
         <input type="number" value={grossOverride} onChange={(e) => setGrossOverride(e.target.value)} placeholder="leave blank to use price × rate" />
         <div className="row">
           <div>
-            <label>Agent split (%)</label>
+            <label>Agent split (%) <span className="muted">— Charles gets the rest</span></label>
             <input type="number" value={splitAuto ? computedAutoSplit : splitManual} disabled={splitAuto} onChange={(e) => setSplitManual(+e.target.value)} />
             <div className="hint">
               <label style={{ display: "inline-flex", alignItems: "center", gap: 6, margin: 0 }}>
@@ -169,37 +165,42 @@ export default function Calculator({
               </label>
             </div>
           </div>
-          <div><label>Referral out (%)</label><input type="number" value={referralPct} onChange={(e) => setReferralPct(+e.target.value)} /></div>
+          <div><label>Zillow / referral off top (%)</label>{numIn(referralPct, setReferralPct, "1")}</div>
         </div>
         <div className="row">
-          <div><label>Concessions ($)</label><input type="number" value={concessions} onChange={(e) => setConcessions(+e.target.value)} /></div>
-          <div><label>Bonus to agent ($)</label><input type="number" value={bonus} onChange={(e) => setBonus(+e.target.value)} /></div>
+          <div><label>Concessions ($)</label>{numIn(concessions, setConcessions, "50")}</div>
+          <div><label>Bonus to agent ($)</label>{numIn(bonus, setBonus, "50")}</div>
+        </div>
+
+        <h2 style={{ marginTop: 18 }}>Agent deductions <span className="muted" style={{ fontWeight: 400, textTransform: "none" }}>→ to brokerage</span></h2>
+        <div className="row">
+          <div><label>Agent cap ($)</label>{numIn(agentCap, setAgentCap, "50")}</div>
+          <div><label>Agent royalty ($)</label>{numIn(agentRoyalty, setAgentRoyalty, "10")}</div>
         </div>
         <div className="row">
-          <div><label>Royalty (%)</label><input type="number" step="0.1" value={royaltyPct} onChange={(e) => setRoyaltyPct(+e.target.value)} /></div>
-          <div><label>E&amp;O fee ($)</label><input type="number" value={eoFee} onChange={(e) => setEoFee(+e.target.value)} /></div>
+          <div><label>E&amp;O fee ($)</label>{numIn(agentEO, setAgentEO, "5")}</div>
+          <div><label>Compliance fee ($)</label>{numIn(complianceFee, setComplianceFee, "5")}</div>
         </div>
         <div className="row">
-          <div><label>Compliance fee ($)</label><input type="number" value={complianceFee} onChange={(e) => setComplianceFee(+e.target.value)} /></div>
-          <div>
-            <label>Cap status</label>
-            <select value={capMode} onChange={(e) => setCapMode(e.target.value as typeof capMode)}>
-              <option value="auto">Auto (agent cap balance)</option>
-              <option value="capped">Capped — keeps 100%</option>
-              <option value="none">No cap this deal</option>
-            </select>
-          </div>
+          <div><label>Monthly dues ($)</label>{numIn(monthlyDues, setMonthlyDues, "5")}</div>
+          <div><label>Other deductions ($)</label>{numIn(agentDeductions, setAgentDeductions, "10")}</div>
         </div>
-        {s.note ? <div className="hint">{s.note}</div> : null}
+
+        <h2 style={{ marginTop: 18 }}>Charles deductions <span className="muted" style={{ fontWeight: 400, textTransform: "none" }}>→ to brokerage</span></h2>
+        <div className="row">
+          <div><label>Charles cap ($)</label>{numIn(charlesCap, setCharlesCap, "50")}</div>
+          <div><label>Charles royalty ($)</label>{numIn(charlesRoyalty, setCharlesRoyalty, "10")}</div>
+        </div>
+        <label>Charles other deductions ($)</label>{numIn(charlesDeductions, setCharlesDeductions, "10")}
       </div>
 
       {/* STATEMENT */}
       <div className="card">
         <h2>Commission statement</h2>
         <div className="kpis">
-          <div className="kpi net"><div className="l">Net to agent</div><div className="v">{money(s.netToAgent)}</div></div>
-          <div className="kpi house"><div className="l">To brokerage</div><div className="v">{money(s.toBrokerage)}</div></div>
-          <div className="kpi"><div className="l">Gross</div><div className="v">{money(s.gross)}</div></div>
+          <div className="kpi net"><div className="l">Net to Agent</div><div className="v">{money(s.netToAgent)}</div></div>
+          <div className="kpi house"><div className="l">Net to Charles</div><div className="v">{money(s.netToCharles)}</div></div>
+          <div className="kpi"><div className="l">Net to Brokerage</div><div className="v" style={{ color: "var(--gold)" }}>{money(s.netToBrokerage)}</div></div>
         </div>
         <div className="stmt">
           <div className="sh">
@@ -218,19 +219,33 @@ export default function Calculator({
               <tr><td>Sale price</td><td className="r">{money(price)}</td></tr>
               <tr className="sub"><td>Commission rate</td><td className="r">{commissionPct}%</td></tr>
               <tr><td><b>Gross commission</b></td><td className="r"><b>{money(s.gross)}</b></td></tr>
-              {s.referral > 0 && <tr className="minus"><td>Referral out ({referralPct}%)</td><td className="r">– {money(s.referral)}</td></tr>}
+              {s.referral > 0 && <tr className="minus"><td>Zillow / referral ({referralPct}%)</td><td className="r">– {money(s.referral)}</td></tr>}
               {s.concessions > 0 && <tr className="minus"><td>Concessions</td><td className="r">– {money(s.concessions)}</td></tr>}
               <tr><td>Commissionable amount</td><td className="r">{money(s.commissionable)}</td></tr>
-              <tr className="section"><td colSpan={2}>Split{s.capped ? " — capped (100%)" : ""}</td></tr>
-              <tr><td>Agent share ({s.splitPct}%)</td><td className="r">{money(s.agentShare)}</td></tr>
-              <tr className="sub"><td>Brokerage share</td><td className="r">{money(s.brokerageShare)}</td></tr>
-              <tr className="section"><td colSpan={2}>Agent deductions</td></tr>
-              {s.royalty > 0 && <tr className="minus"><td>Royalty ({royaltyPct}%)</td><td className="r">– {money(s.royalty)}</td></tr>}
-              {s.eoFee > 0 && <tr className="minus"><td>E&amp;O fee</td><td className="r">– {money(s.eoFee)}</td></tr>}
+
+              <tr className="section"><td colSpan={2}>Split</td></tr>
+              <tr><td>Agent share ({s.agentSplitPct}%)</td><td className="r">{money(s.agentShare)}</td></tr>
+              <tr className="sub"><td>Charles share</td><td className="r">{money(s.charlesShare)}</td></tr>
+
+              <tr className="section"><td colSpan={2}>Agent deductions → brokerage</td></tr>
+              {s.agentCap > 0 && <tr className="minus"><td>Agent cap</td><td className="r">– {money(s.agentCap)}</td></tr>}
+              {s.agentRoyalty > 0 && <tr className="minus"><td>Agent royalty</td><td className="r">– {money(s.agentRoyalty)}</td></tr>}
+              {s.agentEO > 0 && <tr className="minus"><td>E&amp;O fee</td><td className="r">– {money(s.agentEO)}</td></tr>}
               {s.complianceFee > 0 && <tr className="minus"><td>Compliance fee</td><td className="r">– {money(s.complianceFee)}</td></tr>}
+              {s.monthlyDues > 0 && <tr className="minus"><td>Monthly dues</td><td className="r">– {money(s.monthlyDues)}</td></tr>}
+              {s.agentDeductions > 0 && <tr className="minus"><td>Other deductions</td><td className="r">– {money(s.agentDeductions)}</td></tr>}
               {s.bonus > 0 && <tr><td>Bonus to agent</td><td className="r">+ {money(s.bonus)}</td></tr>}
-              {s.agentDeductions === 0 && s.bonus === 0 && <tr className="sub"><td>No deductions</td><td className="r">$0.00</td></tr>}
-              <tr className="tot"><td>Net to agent</td><td className="r">{money(s.netToAgent)}</td></tr>
+              {s.agentDeductTotal === 0 && s.bonus === 0 && <tr className="sub"><td>None</td><td className="r">$0.00</td></tr>}
+
+              {(s.charlesDeductTotal > 0) && <tr className="section"><td colSpan={2}>Charles deductions → brokerage</td></tr>}
+              {s.charlesCap > 0 && <tr className="minus"><td>Charles cap</td><td className="r">– {money(s.charlesCap)}</td></tr>}
+              {s.charlesRoyalty > 0 && <tr className="minus"><td>Charles royalty</td><td className="r">– {money(s.charlesRoyalty)}</td></tr>}
+              {s.charlesDeductions > 0 && <tr className="minus"><td>Charles other</td><td className="r">– {money(s.charlesDeductions)}</td></tr>}
+
+              <tr className="section"><td colSpan={2}>Net payouts</td></tr>
+              <tr className="tot"><td>Net to Agent</td><td className="r">{money(s.netToAgent)}</td></tr>
+              <tr className="tot"><td>Net to Charles</td><td className="r">{money(s.netToCharles)}</td></tr>
+              <tr className="tot"><td>Net to Brokerage</td><td className="r">{money(s.netToBrokerage)}</td></tr>
             </tbody>
           </table>
         </div>
