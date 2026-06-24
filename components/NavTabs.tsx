@@ -8,9 +8,9 @@ const BASE = [
   { href: "/app/history", label: "History" },
 ];
 
-export default function NavTabs({ isOwner = false }: { isOwner?: boolean }) {
+export default function NavTabs({ canManageTeam = false }: { canManageTeam?: boolean }) {
   const path = usePathname();
-  const tabs = isOwner ? [...BASE, { href: "/app/team", label: "Team" }] : BASE;
+  const tabs = canManageTeam ? [...BASE, { href: "/app/team", label: "Team" }] : BASE;
   return (
     <>
       {tabs.map((t) => (

@@ -7,13 +7,14 @@ import { setMemberRole, removeMember } from "@/app/app/team/actions";
 
 const ROLE_LABEL: Record<string, string> = {
   owner: "Super Admin",
+  broker: "Broker",
   transaction_coordinator: "Transaction Coordinator",
   accountant: "Accountant",
   agent: "Agent",
 };
-const ASSIGNABLE = ["transaction_coordinator", "accountant", "agent"];
+const ASSIGNABLE = ["broker", "transaction_coordinator", "accountant", "agent"];
 
-export default function TeamManager({ members }: { members: Member[] }) {
+export default function TeamManager({ members, viewerRole }: { members: Member[]; viewerRole: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState("");
   const pending = members.filter((m) => m.status === "pending");
@@ -47,6 +48,7 @@ export default function TeamManager({ members }: { members: Member[] }) {
                   <td><b>{m.email}</b></td>
                   <td className="r" style={{ whiteSpace: "nowrap" }}>
                     <span className="hint" style={{ margin: "0 8px 0 0" }}>Approve as:</span>
+                    <button className="btn sm" disabled={busy === m.id} onClick={() => assign(m.id, "broker")}>Broker</button>{" "}
                     <button className="btn sm" disabled={busy === m.id} onClick={() => assign(m.id, "transaction_coordinator")}>Coordinator</button>{" "}
                     <button className="btn sm" disabled={busy === m.id} onClick={() => assign(m.id, "accountant")}>Accountant</button>{" "}
                     <button className="btn ghost sm" disabled={busy === m.id} onClick={() => assign(m.id, "agent")}>Agent</button>{" "}
@@ -74,6 +76,8 @@ export default function TeamManager({ members }: { members: Member[] }) {
                 <td>
                   {m.role === "owner" ? (
                     <span className="pill owner">Super Admin</span>
+                  ) : m.isSelf ? (
+                    <span className="pill capped">{ROLE_LABEL[m.role] || m.role}</span>
                   ) : (
                     <select value={m.role} disabled={busy === m.id} onChange={(e) => assign(m.id, e.target.value)} style={{ width: "auto" }}>
                       {ASSIGNABLE.map((r) => <option key={r} value={r}>{ROLE_LABEL[r]}</option>)}
@@ -89,7 +93,11 @@ export default function TeamManager({ members }: { members: Member[] }) {
             ))}
           </tbody>
         </table>
-        <p className="hint">Transaction Coordinators and Accountants have full access to the calculator, agents, and history. Only you (Super Admin) can manage the team.</p>
+        <p className="hint">
+          Brokers have full access including team management (a second admin). Transaction Coordinators and Accountants
+          have full access to the calculator, agents, and history, but can&apos;t manage the team. You are signed in as{" "}
+          <b>{ROLE_LABEL[viewerRole] || viewerRole}</b>. The Super Admin account is protected and can&apos;t be changed or removed.
+        </p>
       </div>
     </>
   );
