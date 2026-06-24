@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 
 const BASE = [
   { href: "/app/calculator", label: "Calculator" },
+  { href: "/app/transactions", label: "Transactions" },
   { href: "/app/agents", label: "Agents" },
-  { href: "/app/history", label: "History" },
 ];
 
 export default function NavTabs({ canManageTeam = false }: { canManageTeam?: boolean }) {
