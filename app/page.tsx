@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Wordmark from "@/components/Wordmark";
 
 const FEATURES = [
   {
@@ -32,7 +31,7 @@ export default function LandingPage() {
   return (
     <>
       <header className="appbar">
-        <Wordmark />
+        <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 30, width: "auto", display: "block" }} />
         <div className="sub" style={{ marginLeft: 4 }}>Commission App</div>
         <nav className="tabs">
           <Link href="/login" className="active">Log in / Sign up →</Link>
