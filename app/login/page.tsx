@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signIn, signUp } from "@/app/auth/actions";
+import Wordmark from "@/components/Wordmark";
 
 export default function LoginPage() {
   const [mode, setMode] = useState<"in" | "up">("in");
@@ -22,7 +23,7 @@ export default function LoginPage() {
     <>
       <header className="appbar">
         <Link href="/" style={{ display: "inline-flex" }}>
-          <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 32, width: "auto", display: "block" }} />
+          <Wordmark />
         </Link>
         <div className="sub" style={{ marginLeft: 4 }}>Commission App</div>
       </header>
