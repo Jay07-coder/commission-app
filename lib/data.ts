@@ -7,7 +7,7 @@ export interface Context {
   email: string;
   brokerageId: string;
   brokerageName: string;
-  role: string;     // owner | transaction_coordinator | accountant | agent
+  role: string;     // owner | broker | transaction_coordinator | accountant | agent
   status: string;   // active | pending
 }
 
@@ -52,6 +52,10 @@ export async function getContext(): Promise<Context | null> {
 }
 
 export const isOwner = (ctx: Context | null) => ctx?.role === "owner" && ctx?.status === "active";
+
+/** Owner (Super Admin) or Broker — both may manage the team. */
+export const canManageTeam = (ctx: Context | null) =>
+  (ctx?.role === "owner" || ctx?.role === "broker") && ctx?.status === "active";
 
 async function seedDefaults(brokerageId: string) {
   const supabase = await createClient();
