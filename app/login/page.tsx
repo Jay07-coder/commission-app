@@ -21,8 +21,10 @@ export default function LoginPage() {
   return (
     <>
       <header className="appbar">
-        <Link href="/" className="logo" style={{ textDecoration: "none" }}>TA</Link>
-        <div><h1>Top Agent Realty</h1><div className="sub">Commission App</div></div>
+        <Link href="/" style={{ display: "inline-flex" }}>
+          <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 32, width: "auto", display: "block" }} />
+        </Link>
+        <div className="sub" style={{ marginLeft: 4 }}>Commission App</div>
       </header>
       <main style={{ maxWidth: 420 }}>
         <div className="card">
