@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getContext } from "@/lib/data";
 import { sendApprovalEmail } from "@/lib/email";
-import { CREATE_ROLES, COMMISSION_ROLES, APPROVE_ROLES, FINALIZE_ROLES } from "@/lib/transactions";
+import { CREATE_ROLES, COMMISSION_ROLES, APPROVE_ROLES, FINALIZE_ROLES, STAGE_LABEL, type Stage } from "@/lib/transactions";
 import type { Statement } from "@/lib/commission";
 
 type Result = { ok: boolean; message?: string; id?: string };
@@ -218,6 +218,62 @@ export async function finalizeTransaction(id: string): Promise<Result> {
   if (error) return { ok: false, message: error.message };
   await addNoteRow(id, ctx.brokerageId, ctx.email, "finalize", "Statement sent to agent — transaction completed.");
   revalidatePath(`/app/transactions/${id}`);
+  revalidatePath("/app/transactions");
+  return { ok: true };
+}
+
+/** Drag-and-drop on the board: move a transaction to a new stage, with the same gating & effects as the buttons. */
+export async function moveStage(id: string, to: Stage): Promise<Result> {
+  const ctx = await ctxOrFail();
+  if (!ctx) return { ok: false, message: "Not signed in" };
+
+  const allowedRoles =
+    to === "draft" || to === "commission" ? Array.from(new Set([...CREATE_ROLES, ...COMMISSION_ROLES]))
+    : to === "pending_approval" ? COMMISSION_ROLES
+    : to === "changes_requested" || to === "approved" ? APPROVE_ROLES
+    : to === "completed" ? FINALIZE_ROLES
+    : [];
+  if (!allowedRoles.includes(ctx.role)) {
+    return { ok: false, message: `You don't have permission to move a card to “${STAGE_LABEL[to]}”.` };
+  }
+
+  const supabase = await createClient();
+  const { data: txn } = await supabase
+    .from("transactions")
+    .select("stage, result, property_address, agent_name")
+    .eq("id", id)
+    .single();
+  if (!txn) return { ok: false, message: "Transaction not found" };
+  if (to === "pending_approval" && !(txn as { result: unknown }).result) {
+    return { ok: false, message: "Add the commission details first — open the card." };
+  }
+
+  const patch: Record<string, unknown> = { stage: to, updated_at: new Date().toISOString() };
+  if (to === "pending_approval") patch.submitted_at = new Date().toISOString();
+  if (to === "approved") { patch.approved_at = new Date().toISOString(); patch.approved_by_email = ctx.email; }
+
+  const { error } = await supabase.from("transactions").update(patch).eq("id", id);
+  if (error) return { ok: false, message: error.message };
+
+  const noteAction =
+    to === "approved" ? "approve" : to === "changes_requested" ? "request_changes"
+    : to === "completed" ? "finalize" : "submit";
+  await addNoteRow(id, ctx.brokerageId, ctx.email, noteAction, `Moved to “${STAGE_LABEL[to]}” on the board.`);
+
+  if (to === "pending_approval") {
+    const { data: approvers } = await supabase
+      .from("memberships").select("email, role, status")
+      .eq("brokerage_id", ctx.brokerageId).in("role", ["broker", "owner"]).eq("status", "active");
+    const recips = ((approvers as { email: string | null }[] | null) ?? []).map((m) => m.email).filter((e): e is string => !!e);
+    await sendApprovalEmail({
+      to: recips,
+      property: (txn as { property_address: string | null }).property_address || "",
+      agent: (txn as { agent_name: string | null }).agent_name || "",
+      submittedBy: ctx.email,
+      transactionId: id,
+    });
+  }
+
   revalidatePath("/app/transactions");
   return { ok: true };
 }
