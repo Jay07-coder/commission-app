@@ -20,8 +20,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     return (
       <>
         <header className="appbar">
-          <div className="logo">TA</div>
-          <div><h1>{ctx.brokerageName}</h1><div className="sub">{ctx.email}</div></div>
+          <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 32, width: "auto", display: "block" }} />
+          <div className="sub" style={{ marginLeft: 4 }}>{ctx.email}</div>
           <nav className="tabs">
             <form action={signOut} style={{ display: "inline" }}><button type="submit">Sign out</button></form>
           </nav>
@@ -43,11 +43,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <>
       <header className="appbar">
-        <div className="logo">TA</div>
-        <div>
-          <h1>{ctx.brokerageName}</h1>
-          <div className="sub">{ctx.email} · {ROLE_LABEL[ctx.role] || ctx.role}</div>
-        </div>
+        <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 32, width: "auto", display: "block" }} />
+        <div className="sub" style={{ marginLeft: 4 }}>{ctx.email} · {ROLE_LABEL[ctx.role] || ctx.role}</div>
         <nav className="tabs">
           <NavTabs canManageTeam={canManageTeam} />
           <form action={signOut} style={{ display: "inline" }}><button type="submit">Sign out</button></form>
