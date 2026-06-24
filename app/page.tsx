@@ -31,11 +31,8 @@ export default function LandingPage() {
   return (
     <>
       <header className="appbar">
-        <div className="logo">TA</div>
-        <div>
-          <h1>Top Agent Realty — Commission App</h1>
-          <div className="sub">Commission management for modern brokerages</div>
-        </div>
+        <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 32, width: "auto", display: "block" }} />
+        <div className="sub" style={{ marginLeft: 4 }}>Commission App</div>
         <nav className="tabs">
           <Link href="/login" className="active">Log in / Sign up →</Link>
         </nav>
