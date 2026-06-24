@@ -49,7 +49,7 @@ export default function LandingPage() {
               fontWeight: 700,
               letterSpacing: ".4px",
               textTransform: "uppercase",
-              background: "rgba(45,212,191,.14)",
+              background: "#eef2ff",
               color: "var(--accent)",
               marginBottom: 18,
             }}
