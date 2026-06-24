@@ -11,7 +11,7 @@ export async function signIn(_prev: unknown, formData: FormData): Promise<AuthRe
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: error.message };
-  redirect("/app/calculator");
+  redirect("/app/transactions");
 }
 
 export async function signUp(_prev: unknown, formData: FormData): Promise<AuthResult> {
@@ -22,7 +22,7 @@ export async function signUp(_prev: unknown, formData: FormData): Promise<AuthRe
   if (error) return { error: error.message };
   // If email confirmation is OFF, the user is signed in immediately.
   const { data: { user } } = await supabase.auth.getUser();
-  if (user) redirect("/app/calculator");
+  if (user) redirect("/app/transactions");
   return { error: "", message: "Check your email to confirm your account, then log in." };
 }
 
