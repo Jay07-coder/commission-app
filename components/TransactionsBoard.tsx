@@ -10,12 +10,12 @@ import { moveStage } from "@/app/app/transactions/actions";
 const COLUMNS: Stage[] = ["draft", "commission", "changes_requested", "pending_approval", "approved", "completed"];
 
 const STAGE_ACCENT: Record<Stage, string> = {
-  draft: "#9fb0c3",
-  commission: "#3b82f6",
-  changes_requested: "#f0997b",
-  pending_approval: "#f5c451",
-  approved: "#34d399",
-  completed: "#2dd4bf",
+  draft: "#94a3b8",
+  commission: "#2563eb",
+  changes_requested: "#f97316",
+  pending_approval: "#f59e0b",
+  approved: "#16a34a",
+  completed: "#0d9488",
 };
 
 export default function TransactionsBoard({ transactions, canCreate }: { transactions: Txn[]; canCreate: boolean }) {
@@ -77,7 +77,7 @@ export default function TransactionsBoard({ transactions, canCreate }: { transac
               onDrop={(e) => drop(stage, e)}
               style={{
                 minWidth: 240, maxWidth: 240, flex: "0 0 240px",
-                background: over === stage ? "var(--panel2)" : "var(--panel)",
+                background: over === stage ? "#eaeef6" : "var(--panel2)",
                 border: "1px solid var(--line)", borderRadius: 12, padding: 10,
                 transition: "background .12s",
               }}
@@ -98,7 +98,7 @@ export default function TransactionsBoard({ transactions, canCreate }: { transac
                     onDragStart={(e) => e.dataTransfer.setData("text/plain", t.id)}
                     onClick={() => router.push(`/app/transactions/${t.id}`)}
                     style={{
-                      background: "var(--panel2)", border: "1px solid var(--line)",
+                      background: "var(--panel)", border: "1px solid var(--line)",
                       borderLeft: `3px solid ${STAGE_ACCENT[stage]}`, borderRadius: 8,
                       padding: "10px 12px", cursor: "pointer",
                     }}

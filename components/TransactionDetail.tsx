@@ -15,12 +15,12 @@ import {
 } from "@/app/app/transactions/actions";
 
 const STAGE_COLOR: Record<Stage, { bg: string; fg: string }> = {
-  draft: { bg: "rgba(159,176,195,.16)", fg: "#cbd5e1" },
-  commission: { bg: "rgba(59,130,246,.18)", fg: "#93c5fd" },
-  pending_approval: { bg: "rgba(245,196,81,.18)", fg: "#f5c451" },
-  changes_requested: { bg: "rgba(180,69,58,.22)", fg: "#fca5a5" },
-  approved: { bg: "rgba(52,211,153,.18)", fg: "#6ee7b7" },
-  completed: { bg: "rgba(45,212,191,.16)", fg: "#5eead4" },
+  draft: { bg: "#f1f5f9", fg: "#475569" },
+  commission: { bg: "#eff4ff", fg: "#1d4ed8" },
+  pending_approval: { bg: "#fffaeb", fg: "#b45309" },
+  changes_requested: { bg: "#fff4ed", fg: "#c2410c" },
+  approved: { bg: "#ecfdf3", fg: "#15803d" },
+  completed: { bg: "#effbf8", fg: "#0f766e" },
 };
 
 const ACTION_LABEL: Record<string, string> = {
@@ -84,7 +84,7 @@ export default function TransactionDetail({
 
       {/* Changes requested banner */}
       {txn.stage === "changes_requested" && lastChangeNote && (
-        <div className="banner" style={{ maxWidth: "none", background: "rgba(180,69,58,.14)", borderColor: "rgba(180,69,58,.4)", color: "#fca5a5" }}>
+        <div className="banner" style={{ maxWidth: "none", background: "#fef2f2", borderColor: "#fecaca", color: "#b91c1c" }}>
           <b>Changes requested:</b> {lastChangeNote.body}
         </div>
       )}
