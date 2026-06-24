@@ -5,6 +5,7 @@ import NavTabs from "@/components/NavTabs";
 
 const ROLE_LABEL: Record<string, string> = {
   owner: "Super Admin",
+  broker: "Broker",
   transaction_coordinator: "Transaction Coordinator",
   accountant: "Accountant",
   agent: "Agent",
@@ -38,7 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     );
   }
 
-  const owner = ctx.role === "owner";
+  const canManageTeam = ctx.role === "owner" || ctx.role === "broker";
   return (
     <>
       <header className="appbar">
@@ -48,7 +49,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <div className="sub">{ctx.email} · {ROLE_LABEL[ctx.role] || ctx.role}</div>
         </div>
         <nav className="tabs">
-          <NavTabs isOwner={owner} />
+          <NavTabs canManageTeam={canManageTeam} />
           <form action={signOut} style={{ display: "inline" }}><button type="submit">Sign out</button></form>
         </nav>
       </header>
