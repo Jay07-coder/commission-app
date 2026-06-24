@@ -3,8 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const BASE = [
+  { href: "/app/transactions", label: "Board" },
   { href: "/app/calculator", label: "Calculator" },
-  { href: "/app/transactions", label: "Transactions" },
   { href: "/app/agents", label: "Agents" },
 ];
 
