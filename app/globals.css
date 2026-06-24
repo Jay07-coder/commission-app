@@ -57,3 +57,10 @@ input:focus,select:focus{border-color:var(--accent2)}
 .banner{background:rgba(245,196,81,.12);border:1px solid rgba(245,196,81,.4);color:#f5d98a;
   padding:10px 14px;border-radius:10px;font-size:13px;margin:0 auto 16px;max-width:1136px}
 .muted{color:var(--muted)}
+@media print{
+  .appbar,.tabs{display:none !important}
+  body{background:#fff !important}
+  main{padding:0 !important;max-width:none !important}
+  .print-sheet{padding:0 !important}
+  .stmt{box-shadow:none}
+}
