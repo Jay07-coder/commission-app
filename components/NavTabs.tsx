@@ -10,7 +10,9 @@ const BASE = [
 
 export default function NavTabs({ canManageTeam = false }: { canManageTeam?: boolean }) {
   const path = usePathname();
-  const tabs = canManageTeam ? [...BASE, { href: "/app/team", label: "Team" }] : BASE;
+  const tabs = canManageTeam
+    ? [...BASE, { href: "/app/reports", label: "Reports" }, { href: "/app/team", label: "Team" }]
+    : BASE;
   return (
     <>
       {tabs.map((t) => (
