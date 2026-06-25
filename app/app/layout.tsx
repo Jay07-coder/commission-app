@@ -4,6 +4,7 @@ import { getContext } from "@/lib/data";
 import { signOut } from "@/app/auth/actions";
 import NavTabs from "@/components/NavTabs";
 import Logo from "@/components/Logo";
+import ChatWidget from "@/components/ChatWidget";
 
 const ROLE_LABEL: Record<string, string> = {
   owner: "Super Admin",
@@ -55,6 +56,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </nav>
       </header>
       <main>{children}</main>
+      <ChatWidget />
     </>
   );
 }
