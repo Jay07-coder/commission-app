@@ -1,6 +1,5 @@
 const RESEND_KEY = process.env.RESEND_API_KEY;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://commission-app-peach.vercel.app";
-const LOGO = "https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png";
 
 /** Notify the broker(s) that a transaction is awaiting their approval. No-op until RESEND_API_KEY is set. */
 export async function sendApprovalEmail(opts: {
@@ -16,8 +15,8 @@ export async function sendApprovalEmail(opts: {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8;margin:0;padding:32px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
   <tr><td align="center">
     <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,0.08);">
-      <tr><td align="center" bgcolor="#0f2440" style="background-color:#0f2440;padding:24px 32px;">
-        <img src="${LOGO}" alt="Top Agent Realty" width="220" style="display:block;width:220px;max-width:72%;height:auto;" />
+      <tr><td align="center" bgcolor="#0f2440" style="background-color:#0f2440;padding:26px 32px;">
+        <span style="font-size:26px;font-weight:600;letter-spacing:-0.5px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;"><span style="color:#ffffff;">Split</span><span style="color:#60a5fa;">Key</span></span>
       </td></tr>
       <tr><td style="padding:28px 40px 8px 40px;">
         <h1 style="margin:0 0 12px 0;font-size:21px;color:#101828;font-weight:700;text-align:center;">A commission needs your approval</h1>
@@ -45,7 +44,7 @@ export async function sendApprovalEmail(opts: {
       method: "POST",
       headers: { Authorization: `Bearer ${RESEND_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Top Agent Realty <noreply@topagentmi.com>",
+        from: "SplitKey <noreply@topagentmi.com>",
         to: opts.to,
         subject: `Approval needed: ${opts.property || opts.agent || "commission transaction"}`,
         html,
