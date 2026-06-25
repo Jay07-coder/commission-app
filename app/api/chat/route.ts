@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getContext, getAgents, getSources } from "@/lib/data";
-import { listTransactions } from "@/lib/transactions-server";
+import { listAllForReports } from "@/lib/transactions-server";
 import { askAssistant, type ChatMessage } from "@/lib/ai";
 import { money } from "@/lib/commission";
 import { STAGE_LABEL, type Txn } from "@/lib/transactions";
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
 
   let snapshot = "(data unavailable)";
   try {
-    const [agents, sources, txns] = await Promise.all([getAgents(), getSources(), listTransactions()]);
+    const [agents, sources, txns] = await Promise.all([getAgents(), getSources(), listAllForReports()]);
     snapshot = buildDataSnapshot(ctx.brokerageName, agents, sources, txns);
   } catch {
     // If data fetch fails, the assistant can still help with how-to questions.
