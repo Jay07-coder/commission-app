@@ -36,6 +36,8 @@ export interface Txn {
   commission_pct: number | null;
   city: string | null;
   zipcode: string | null;
+  imported?: boolean | null;
+  external_status?: string | null;
   input: Record<string, unknown> | null;
   result: Statement | null;
   net_to_agent: number | null;
