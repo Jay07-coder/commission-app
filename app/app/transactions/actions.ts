@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getContext } from "@/lib/data";
+import { getContext, canManageTeam } from "@/lib/data";
 import { sendApprovalEmail } from "@/lib/email";
 import { CREATE_ROLES, COMMISSION_ROLES, APPROVE_ROLES, FINALIZE_ROLES, STAGE_LABEL, type Stage } from "@/lib/transactions";
 import type { Statement } from "@/lib/commission";
@@ -274,6 +274,18 @@ export async function moveStage(id: string, to: Stage): Promise<Result> {
     });
   }
 
+  revalidatePath("/app/transactions");
+  return { ok: true };
+}
+
+/** Permanently delete a transaction (admins only). */
+export async function deleteTransaction(id: string): Promise<Result> {
+  const ctx = await ctxOrFail();
+  if (!ctx) return { ok: false, message: "Not signed in" };
+  if (!canManageTeam(ctx)) return { ok: false, message: "Only an admin can delete transactions" };
+  const supabase = await createClient();
+  const { error } = await supabase.from("transactions").delete().eq("id", id);
+  if (error) return { ok: false, message: error.message };
   revalidatePath("/app/transactions");
   return { ok: true };
 }
