@@ -18,6 +18,8 @@ export interface DealPayload {
   client: string;
   close_date: string;
   commission_pct: number | null;
+  city?: string;
+  zipcode?: string;
 }
 
 export interface CommissionPayload {
@@ -50,6 +52,8 @@ export async function createDraft(deal: DealPayload): Promise<Result> {
       client: deal.client || null,
       close_date: deal.close_date || null,
       commission_pct: deal.commission_pct,
+      city: deal.city || null,
+      zipcode: deal.zipcode || null,
     })
     .select("id")
     .single();
@@ -74,6 +78,8 @@ export async function saveDeal(id: string, deal: DealPayload): Promise<Result> {
       client: deal.client || null,
       close_date: deal.close_date || null,
       commission_pct: deal.commission_pct,
+      city: deal.city || null,
+      zipcode: deal.zipcode || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)
