@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getContext } from "@/lib/data";
 import { signOut } from "@/app/auth/actions";
 import NavTabs from "@/components/NavTabs";
+import Logo from "@/components/Logo";
 
 const ROLE_LABEL: Record<string, string> = {
   owner: "Super Admin",
@@ -21,7 +22,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     return (
       <>
         <header className="appbar">
-          <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 30, width: "auto", display: "block" }} />
+          <Logo variant="dark" size={30} />
           <div className="sub" style={{ marginLeft: 4 }}>{ctx.email}</div>
           <nav className="tabs">
             <form action={signOut} style={{ display: "inline" }}><button type="submit">Sign out</button></form>
@@ -44,10 +45,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <>
       <header className="appbar">
-        <Link href="/app/transactions" style={{ display: "inline-flex" }} aria-label="Go to board">
-          <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 30, width: "auto", display: "block", cursor: "pointer" }} />
+        <Link href="/app/transactions" style={{ display: "inline-flex", cursor: "pointer" }} aria-label="Go to board">
+          <Logo variant="dark" size={30} />
         </Link>
-        <div className="sub" style={{ marginLeft: 4 }}>{ctx.email} · {ROLE_LABEL[ctx.role] || ctx.role}</div>
+        <div className="sub" style={{ marginLeft: 4 }}>{ctx.brokerageName} · {ROLE_LABEL[ctx.role] || ctx.role}</div>
         <nav className="tabs">
           <NavTabs canManageTeam={canManageTeam} />
           <form action={signOut} style={{ display: "inline" }}><button type="submit">Sign out</button></form>
