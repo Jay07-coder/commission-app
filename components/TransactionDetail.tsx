@@ -11,7 +11,7 @@ import {
 import StatementView from "@/components/StatementView";
 import CommissionEditor from "@/components/CommissionEditor";
 import {
-  saveDeal, submitToAccountant, approveTransaction, requestChanges, finalizeTransaction, addComment,
+  saveDeal, submitToAccountant, approveTransaction, requestChanges, finalizeTransaction, addComment, deleteTransaction,
 } from "@/app/app/transactions/actions";
 
 const STAGE_COLOR: Record<Stage, { bg: string; fg: string }> = {
@@ -44,7 +44,17 @@ export default function TransactionDetail({
   const canCommission = COMMISSION_ROLES.includes(role);
   const canApprove = APPROVE_ROLES.includes(role);
   const canFinalize = FINALIZE_ROLES.includes(role);
+  const canDelete = role === "owner" || role === "broker";
   const c = STAGE_COLOR[txn.stage];
+
+  async function del() {
+    if (!confirm("Delete this transaction permanently? This can't be undone.")) return;
+    setBusy("delete");
+    const res = await deleteTransaction(txn.id);
+    setBusy("");
+    if (res.ok) router.push("/app/transactions");
+    else alert(res.message);
+  }
 
   async function run(name: string, fn: () => Promise<{ ok: boolean; message?: string }>) {
     setBusy(name);
@@ -69,6 +79,11 @@ export default function TransactionDetail({
           <h2 style={{ margin: 0, textTransform: "none", letterSpacing: 0, fontSize: 18, color: "var(--ink)" }}>
             {txn.property_address || "Untitled property"}
           </h2>
+          {canDelete && (
+            <button className="btn ghost sm" onClick={del} disabled={!!busy} style={{ marginLeft: "auto", color: "#b91c1c", borderColor: "#fecaca" }}>
+              {busy === "delete" ? "Deleting…" : "Delete"}
+            </button>
+          )}
         </div>
         <div className="meta" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 16px", marginTop: 12, fontSize: 13 }}>
           <div><span className="muted">Agent:</span> <b>{txn.agent_name || "—"}</b></div>
