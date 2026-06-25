@@ -116,7 +116,7 @@ export default function MapView({ deals }: { deals: Deal[] }) {
     const pts = byZip.filter((z) => centroids[z.zip]);
     if (!pts.length) return;
     const max = Math.max(...pts.map((p) => (metric === "deals" ? p.count : p.gross)), 1);
-    const shade = (t: number) => (t > 0.66 ? "#1e3a8a" : t > 0.33 ? "#2563eb" : "#60a5fa");
+    const shade = (t: number) => (t > 0.66 ? "#991b1b" : t > 0.33 ? "#dc2626" : "#f87171");
     const latlngs: [number, number][] = [];
     for (const p of pts) {
       const ll = centroids[p.zip]; latlngs.push(ll);
