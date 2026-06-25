@@ -9,6 +9,8 @@ export default function NewTransactionForm({ agents, sources }: { agents: string
   const [agent, setAgent] = useState(agents[0] || "");
   const [source, setSource] = useState(sources[0] || "");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [zipcode, setZipcode] = useState("");
   const [client, setClient] = useState("");
   const [side, setSide] = useState("Buyer");
   const [closeDate, setCloseDate] = useState(new Date().toISOString().slice(0, 10));
@@ -29,6 +31,8 @@ export default function NewTransactionForm({ agents, sources }: { agents: string
       client,
       close_date: closeDate,
       commission_pct: pct === "" ? null : parseFloat(pct),
+      city,
+      zipcode,
     });
     setBusy(false);
     if (res.ok && res.id) router.push(`/app/transactions/${res.id}`);
@@ -58,6 +62,10 @@ export default function NewTransactionForm({ agents, sources }: { agents: string
       <div className="row">
         <div><label>Property address</label><input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St" /></div>
         <div><label>Client</label><input value={client} onChange={(e) => setClient(e.target.value)} placeholder="Client name" /></div>
+      </div>
+      <div className="row">
+        <div><label>City</label><input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Troy" /></div>
+        <div><label>Zip code <span className="muted" style={{ fontWeight: 400 }}>(for area KPIs)</span></label><input value={zipcode} onChange={(e) => setZipcode(e.target.value)} placeholder="48084" inputMode="numeric" /></div>
       </div>
       <div className="row">
         <div>

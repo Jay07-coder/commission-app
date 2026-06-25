@@ -49,6 +49,12 @@ export default function ReportsDashboard({ transactions }: { transactions: Txn[]
   const [period, setPeriod] = useState<Period>("ytd");
   const [status, setStatus] = useState<StatusFilter>("approved_plus");
   const [chartMetric, setChartMetric] = useState<"gross" | "brokerage">("gross");
+  const [source, setSource] = useState("");
+
+  const sources = useMemo(
+    () => (Array.from(new Set(transactions.map((t) => t.source_name).filter(Boolean))) as string[]).sort(),
+    [transactions]
+  );
 
   const filtered = useMemo(() => {
     const now = new Date();
@@ -58,6 +64,7 @@ export default function ReportsDashboard({ transactions }: { transactions: Txn[]
     const start12 = new Date(now.getFullYear(), now.getMonth() - 11, 1);
     return transactions.filter((t) => {
       if (stages && !stages.includes(t.stage)) return false;
+      if (source && t.source_name !== source) return false;
       const d = txnDate(t);
       if (!d && period !== "all") return false;
       if (period === "mtd" && d! < startMtd) return false;
@@ -65,7 +72,7 @@ export default function ReportsDashboard({ transactions }: { transactions: Txn[]
       if (period === "12mo" && d! < start12) return false;
       return true;
     });
-  }, [transactions, period, status]);
+  }, [transactions, period, status, source]);
 
   const totals = useMemo(() => {
     let g = 0, brokerage = 0, charles = 0, agent = 0;
@@ -105,6 +112,18 @@ export default function ReportsDashboard({ transactions }: { transactions: Txn[]
     return [...map.values()].sort((a, b) => b.gross - a.gross);
   }, [filtered]);
 
+  const byZip = useMemo(() => {
+    const map = new Map<string, { zip: string; city: string; count: number; gross: number; brokerage: number }>();
+    for (const t of filtered) {
+      const zip = t.zipcode?.trim() || "—";
+      const cur = map.get(zip) || { zip, city: t.city || "", count: 0, gross: 0, brokerage: 0 };
+      cur.count += 1; cur.gross += gross(t); cur.brokerage += t.net_to_brokerage ?? 0;
+      if (!cur.city && t.city) cur.city = t.city;
+      map.set(zip, cur);
+    }
+    return [...map.values()].sort((a, b) => b.gross - a.gross);
+  }, [filtered]);
+
   const months = useMemo(() => {
     // last 12 month buckets (or fewer for narrower periods), always show a rolling 12 for context unless mtd
     const now = new Date();
@@ -136,6 +155,10 @@ export default function ReportsDashboard({ transactions }: { transactions: Txn[]
         <div style={{ display: "flex", gap: 8, marginLeft: "auto", flexWrap: "wrap" }}>
           <Segmented options={PERIODS} value={period} onChange={(v) => setPeriod(v as Period)} />
           <Segmented options={STATUSES} value={status} onChange={(v) => setStatus(v as StatusFilter)} />
+          <select value={source} onChange={(e) => setSource(e.target.value)} style={{ width: "auto" }}>
+            <option value="">All sources</option>
+            {sources.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
         </div>
       </div>
 
@@ -216,6 +239,36 @@ export default function ReportsDashboard({ transactions }: { transactions: Txn[]
                     </div>
                     <div style={{ height: 8, background: "var(--panel2)", borderRadius: 999, overflow: "hidden" }}>
                       <div style={{ height: "100%", width: `${pct}%`, background: "#2563eb", borderRadius: 999 }} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Geographic breakdown by zip code */}
+        <div className="card">
+          <h3 style={{ margin: "0 0 4px", fontSize: 15, color: "var(--ink)" }}>By area (zip code)</h3>
+          <p className="muted" style={{ margin: "0 0 14px", fontSize: 12 }}>
+            Where deals come from{source ? ` for ${source}` : ""} — use the source filter above to isolate Zillow and see which zips to target.
+          </p>
+          {byZip.length === 0 ? (
+            <p className="muted" style={{ margin: 0, fontSize: 13 }}>No deals in this period yet.</p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {byZip.map((z) => {
+                const pct = totals.g > 0 ? Math.round((z.gross / totals.g) * 100) : 0;
+                return (
+                  <div key={z.zip}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 5 }}>
+                      <span style={{ fontWeight: 600, color: "var(--ink)" }}>
+                        {z.zip === "—" ? "No zip set" : z.zip}{z.city ? ` · ${z.city}` : ""}
+                      </span>
+                      <span className="muted">{money(z.gross)} · {z.count} deal{z.count === 1 ? "" : "s"}</span>
+                    </div>
+                    <div style={{ height: 8, background: "var(--panel2)", borderRadius: 999, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${pct}%`, background: "#0d9488", borderRadius: 999 }} />
                     </div>
                   </div>
                 );

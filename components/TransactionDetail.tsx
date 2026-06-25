@@ -92,6 +92,7 @@ export default function TransactionDetail({
           <div><span className="muted">Closing:</span> {txn.close_date || "—"}</div>
           <div><span className="muted">Valuation:</span> {txn.valuation != null ? money(txn.valuation) : "—"}</div>
           <div><span className="muted">Client:</span> {txn.client || "—"}</div>
+          <div><span className="muted">Area:</span> {[txn.city, txn.zipcode].filter(Boolean).join(" · ") || "—"}</div>
           <div><span className="muted">Created by:</span> {txn.created_by_email || "—"}</div>
           {txn.approved_by_email && <div><span className="muted">Approved by:</span> {txn.approved_by_email}</div>}
         </div>
@@ -228,11 +229,13 @@ function DraftEditor({
   const [closeDate, setCloseDate] = useState(txn.close_date || "");
   const [valuation, setValuation] = useState(txn.valuation != null ? String(txn.valuation) : "");
   const [pct, setPct] = useState(txn.commission_pct != null ? String(txn.commission_pct) : "3");
+  const [city, setCity] = useState(txn.city || "");
+  const [zipcode, setZipcode] = useState(txn.zipcode || "");
 
   const payload = () => ({
     property_address: address, valuation: valuation === "" ? null : parseFloat(valuation),
     agent_name: agent, source_name: source, side, client, close_date: closeDate,
-    commission_pct: pct === "" ? null : parseFloat(pct),
+    commission_pct: pct === "" ? null : parseFloat(pct), city, zipcode,
   });
 
   return (
@@ -245,6 +248,10 @@ function DraftEditor({
       <div className="row">
         <div><label>Property address</label><input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St" /></div>
         <div><label>Client</label><input value={client} onChange={(e) => setClient(e.target.value)} placeholder="Client name" /></div>
+      </div>
+      <div className="row">
+        <div><label>City</label><input value={city} onChange={(e) => setCity(e.target.value)} placeholder="Troy" /></div>
+        <div><label>Zip code</label><input value={zipcode} onChange={(e) => setZipcode(e.target.value)} placeholder="48084" /></div>
       </div>
       <div className="row">
         <div><label>Side</label><select value={side} onChange={(e) => setSide(e.target.value)}><option>Buyer</option><option>Listing</option><option>Both</option><option>Lease</option></select></div>
