@@ -49,7 +49,17 @@ function buildDataSnapshot(brokerage: string, agents: { name: string; tier: stri
     bySource.set(k, c);
   }
 
+  const byZip = new Map<string, { count: number; gross: number; brokerage: number; city: string }>();
+  for (const t of settled) {
+    const k = t.zipcode?.trim() || "(no zip)";
+    const c = byZip.get(k) || { count: 0, gross: 0, brokerage: 0, city: t.city || "" };
+    c.count += 1; c.gross += t.result?.gross ?? 0; c.brokerage += t.net_to_brokerage ?? 0;
+    if (!c.city && t.city) c.city = t.city;
+    byZip.set(k, c);
+  }
+
   const lines: string[] = [];
+  lines.push(`Today's date: ${new Date().toISOString().slice(0, 10)}.`);
   lines.push(`Brokerage: ${brokerage}`);
   lines.push(`Settled (approved+completed) deals: ${settled.length}. Totals — gross commission ${money(totals.gross)}, net to brokerage ${money(totals.brokerage)}, net to Charles ${money(totals.charles)}, paid to agents ${money(totals.agent)}.`);
   lines.push(`Deals by stage: ${Object.entries(stageCounts).map(([s, n]) => `${STAGE_LABEL[s as keyof typeof STAGE_LABEL] ?? s}: ${n}`).join(", ") || "none yet"}.`);
@@ -60,7 +70,19 @@ function buildDataSnapshot(brokerage: string, agents: { name: string; tier: stri
     lines.push(`By lead source (settled): ${[...bySource.entries()].map(([n, v]) => `${n} — ${v.count} deal(s), gross ${money(v.gross)}, net to brokerage ${money(v.brokerage)}`).join("; ")}.`);
   }
   lines.push(`Agent roster (${agents.length}): ${agents.map((a) => `${a.name} [${a.tier}, base ${a.baseSplit}%${a.zillowSplit != null ? `, company-lead ${a.zillowSplit}%` : ""}]`).join("; ")}.`);
+  if (byZip.size) {
+    lines.push(`By area/zip (settled): ${[...byZip.entries()].sort((a, b) => b[1].gross - a[1].gross).map(([z, v]) => `${z}${v.city ? ` (${v.city})` : ""} — ${v.count} deal(s), gross ${money(v.gross)}, net to brokerage ${money(v.brokerage)}`).join("; ")}.`);
+  }
   lines.push(`Lead sources: ${sources.map((s) => `${s.name} (${s.category})`).join(", ")}.`);
+
+  const dt = (t: Txn) => (t.close_date || t.created_at || "").slice(0, 10);
+  const rows = [...settled]
+    .sort((a, b) => dt(b).localeCompare(dt(a)))
+    .slice(0, 80)
+    .map((t) => `${dt(t) || "—"} | ${t.agent_name || "—"} | ${t.source_name || "—"} | ${[t.city, t.zipcode].filter(Boolean).join(" ") || "—"} | gross ${money(t.result?.gross ?? 0)} | agentNet ${money(t.net_to_agent ?? 0)} | brokerageNet ${money(t.net_to_brokerage ?? 0)}`);
+  if (rows.length) {
+    lines.push(`\nSETTLED DEAL ROWS (date | agent | source | area | gross | agent net | brokerage net) — newest first, up to 80:\n${rows.join("\n")}`);
+  }
   return lines.join("\n");
 }
 
@@ -102,7 +124,7 @@ ${APP_GUIDE}
 LIVE DATA SNAPSHOT for this brokerage (use ONLY this for data questions; if a figure isn't here, say you don't have it rather than guessing):
 ${snapshot}
 
-STYLE: Be concise and friendly — a few sentences, not essays. Use $ amounts as given. For "how do I…" questions, point to the exact app area. Never invent numbers, agents, or policies. If asked to make a change you can't perform, explain where in the app the user can do it. If a question is outside SplitKey/commissions, gently steer back.`;
+STYLE & CAPABILITIES: Be concise and friendly. You CAN compute KPIs on demand from the SETTLED DEAL ROWS above — filter rows by agent, lead source, area/zip, and/or date range (use today's date for relative periods like "this month", "this quarter", "last 90 days") and sum gross, agent net, and net to brokerage yourself, then show the figures. Use a short bulleted breakdown when listing several numbers. Use $ amounts. Never invent numbers, agents, or policies beyond the data; if a requested slice has no matching rows, say so plainly. For "how do I…" questions point to the exact app area. If asked to make a change you can't perform, say where in the app to do it. If a question is outside SplitKey/commissions, gently steer back.`;
 
   const result = await askAssistant(system, messages);
   return NextResponse.json({ reply: result.text, ok: result.ok, notConfigured: result.notConfigured ?? false });
