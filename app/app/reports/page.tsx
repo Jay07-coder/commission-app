@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getContext, canManageTeam } from "@/lib/data";
-import { listTransactions } from "@/lib/transactions-server";
+import { listAllForReports } from "@/lib/transactions-server";
 import ReportsDashboard from "@/components/ReportsDashboard";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +10,6 @@ export default async function ReportsPage() {
   if (!ctx || ctx.status !== "active") redirect("/login");
   if (!canManageTeam(ctx)) redirect("/app/transactions");
 
-  const transactions = await listTransactions();
+  const transactions = await listAllForReports();
   return <ReportsDashboard transactions={transactions} />;
 }
