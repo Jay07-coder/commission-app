@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Commission App — Top Agent Realty",
+  title: "SplitKey — Commission management for brokerages",
   description: "Calculate, document, and approve real-estate commissions.",
 };
 

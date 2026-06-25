@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 const FEATURES = [
   {
@@ -31,8 +32,7 @@ export default function LandingPage() {
   return (
     <>
       <header className="appbar">
-        <img src="https://topagentrealtymi.com/wp-content/uploads/2026/01/Untitled-design-7-1.png" alt="Top Agent Realty" style={{ height: 30, width: "auto", display: "block" }} />
-        <div className="sub" style={{ marginLeft: 4 }}>Commission App</div>
+        <Logo variant="dark" size={30} />
         <nav className="tabs">
           <Link href="/login" className="active">Log in / Sign up →</Link>
         </nav>
@@ -54,7 +54,7 @@ export default function LandingPage() {
               marginBottom: 18,
             }}
           >
-            For Top Agent Realty
+            Every commission, settled clean
           </div>
           <h2
             style={{
@@ -130,7 +130,7 @@ export default function LandingPage() {
           fontSize: 13,
         }}
       >
-        © Top Agent Realty · Commission App
+        © SplitKey · Commission management for brokerages
       </footer>
     </>
   );
