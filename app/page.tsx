@@ -124,6 +124,83 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* PRODUCT SHOWCASE */}
+      <section id="product" className="lp-section">
+        <div className="lp-wrap">
+          <div className="lp-kicker" data-reveal>See it in action</div>
+          <h2 className="lp-h2" data-reveal style={{ ["--d" as any]: "70ms" }}>This is what your brokerage runs on</h2>
+          <p className="lp-lead" data-reveal style={{ ["--d" as any]: "140ms" }}>Not a concept. These are the real screens your team uses every day.</p>
+
+          <div className="lp-prod-browser lp-prod-stack" data-reveal>
+            <div className="lp-prod-bar"><i style={{ background: "#ff5f57" }} /><i style={{ background: "#febc2e" }} /><i style={{ background: "#28c840" }} /><span>app.splitkey.app · Reports</span></div>
+            <div className="lp-prod-body">
+              <div className="lp-prod-head"><b>Reports</b><span className="lp-prod-live">● Live</span><span className="lp-prod-tag2">Year to date</span></div>
+              <div className="lp-prod-kpis">
+                <div className="lp-pk"><i style={{ background: "#2f6dff" }} /><em>Gross commission</em><b>$1.78M</b></div>
+                <div className="lp-pk"><i style={{ background: "#22c55e" }} /><em>Net to brokerage</em><b>$503K</b></div>
+                <div className="lp-pk"><i style={{ background: "#a855f7" }} /><em>Paid to agents</em><b>$1.04M</b></div>
+                <div className="lp-pk"><i style={{ background: "#f59e0b" }} /><em>Deals closed</em><b>256</b></div>
+              </div>
+              <div className="lp-prod-lower">
+                <div className="lp-prod-chart">
+                  <div style={{ fontSize: 13, color: "#9fb1c8", marginBottom: 12, fontWeight: 600 }}>Monthly gross commission</div>
+                  <div className="lp-pbars">{[52, 38, 60, 44, 30, 40, 24, 28, 36, 47, 88, 70].map((h, i) => <i key={i} style={{ height: `${h}%` }} />)}</div>
+                </div>
+                <div className="lp-prod-top">
+                  <div style={{ fontSize: 13, color: "#9fb1c8", margin: "2px 0 6px", fontWeight: 600 }}>Top agents</div>
+                  <div className="lp-prow"><span>Agent A</span><b>$164,857</b></div>
+                  <div className="lp-prow"><span>Agent B</span><b>$142,310</b></div>
+                  <div className="lp-prow"><span>Agent C</span><b>$118,944</b></div>
+                  <div className="lp-prow"><span>Agent D</span><b>$96,220</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="lp-prod-cap">Live reporting — gross, net splits, top agents, and lead-source ROI, filtered in a click.</p>
+
+          <div className="lp-prod-duo">
+            <div data-reveal>
+              <div className="lp-prod-browser">
+                <div className="lp-prod-bar"><i style={{ background: "#ff5f57" }} /><i style={{ background: "#febc2e" }} /><i style={{ background: "#28c840" }} /><span>Commission statement</span></div>
+                <div className="lp-prod-body">
+                  <div className="lp-stmt2">
+                    <div><span>Sale price</span><b>$540,000</b></div>
+                    <div><span>Gross commission (3%)</span><b>$16,200</b></div>
+                    <div><span>Agent split (70%)</span><b>$11,340</b></div>
+                    <div><span>Royalty + E&amp;O</span><b>−$486</b></div>
+                    <div className="tot"><span>Net to agent</span><b>$10,854</b></div>
+                  </div>
+                </div>
+              </div>
+              <p className="lp-prod-cap">Every split, fee, and cap calculated instantly.</p>
+            </div>
+            <div data-reveal>
+              <div className="lp-prod-browser">
+                <div className="lp-prod-bar"><i style={{ background: "#ff5f57" }} /><i style={{ background: "#febc2e" }} /><i style={{ background: "#28c840" }} /><span>Agent portal</span></div>
+                <div className="lp-prod-body">
+                  <div className="lp-prod-kpis" style={{ gridTemplateColumns: "1fr 1fr" }}>
+                    <div className="lp-pk"><i style={{ background: "#22c55e" }} /><em>YTD earnings</em><b>$88,436</b></div>
+                    <div className="lp-pk"><i style={{ background: "#2f6dff" }} /><em>Closed deals</em><b>23</b></div>
+                  </div>
+                  <div style={{ fontSize: 12, color: "#9fb1c8", margin: "2px 0 7px", fontWeight: 600 }}>Annual cap progress · 72%</div>
+                  <div className="lp-bar-track"><div className="lp-bar-fill" style={{ width: "72%" }} /></div>
+                </div>
+              </div>
+              <p className="lp-prod-cap">Agents log in to see their own earnings and cap progress.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* OUTCOMES */}
+      <section className="lp-wrap">
+        <div className="lp-outcomes" data-reveal>
+          <div><b>Days → minutes</b><span>Commission and payroll prep, every cycle</span></div>
+          <div><b>$0</b><span>Spreadsheet math errors</span></div>
+          <div><b>100%</b><span>On-time, accurate 1099s at year-end</span></div>
+        </div>
+      </section>
+
       {/* SPOTLIGHT: AI */}
       <section className="lp-wrap">
         <div className="lp-spot" data-reveal>
@@ -205,6 +282,32 @@ export default function LandingPage() {
             <div className="lp-step" data-reveal><div className="n">1</div><h3>Add your deals</h3><p>Enter a transaction or import your history. Set each agent’s plan and lead-source rules once.</p></div>
             <div className="lp-step" data-reveal><div className="n">2</div><h3>SplitKey does the math</h3><p>Splits, caps, and fees calculate instantly. Route to your broker for one-click approval.</p></div>
             <div className="lp-step" data-reveal><div className="n">3</div><h3>Everyone stays in sync</h3><p>Agents see their earnings, you see the whole brokerage, and 1099s are ready at year-end.</p></div>
+          </div>
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="lp-section">
+        <div className="lp-wrap">
+          <div className="lp-kicker" data-reveal>Loved by brokers</div>
+          <h2 className="lp-h2" data-reveal style={{ ["--d" as any]: "70ms" }}>Built with brokerages, for brokerages</h2>
+          <p className="lp-lead" data-reveal style={{ ["--d" as any]: "140ms" }}>These are sample quotes — swap in real ones from your team and they&apos;ll carry the most weight.</p>
+          <div className="lp-quotes">
+            <div className="lp-quote" data-reveal>
+              <div className="stars">★★★★★</div>
+              <p>&ldquo;We used to close the books over a week of spreadsheets. Now it&apos;s an afternoon, and the three-way splits are never wrong.&rdquo;</p>
+              <div className="who"><div className="av">MB</div><div><b>Managing Broker</b><em>Sample — replace with a real quote</em></div></div>
+            </div>
+            <div className="lp-quote" data-reveal style={{ ["--d" as any]: "90ms" }}>
+              <div className="stars">★★★★★</div>
+              <p>&ldquo;My agents stopped asking &lsquo;what did I make?&rsquo; — they just log in and see it. That alone was worth it.&rdquo;</p>
+              <div className="who"><div className="av">TC</div><div><b>Team Lead</b><em>Sample — replace with a real quote</em></div></div>
+            </div>
+            <div className="lp-quote" data-reveal style={{ ["--d" as any]: "180ms" }}>
+              <div className="stars">★★★★★</div>
+              <p>&ldquo;1099 season went from dread to a single click. The W-9s were already collected and the totals were just right.&rdquo;</p>
+              <div className="who"><div className="av">OA</div><div><b>Office Admin</b><em>Sample — replace with a real quote</em></div></div>
+            </div>
           </div>
         </div>
       </section>
