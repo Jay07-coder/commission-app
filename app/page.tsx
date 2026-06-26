@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import Scene3D from "@/components/Scene3D";
 
 /* ---------- tiny inline icons ---------- */
 const I = {
@@ -36,11 +37,12 @@ const calIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 
 export default function LandingPage() {
   return (
-    <div className="lp">
+    <div className="lp lp-immersive">
+      <Scene3D />
       {/* NAV */}
       <header className="lp-nav">
         <div className="lp-nav-in">
-          <Logo variant="light" size={28} />
+          <Logo variant="dark" size={28} />
           <nav className="lp-nav-links">
             <a href="#features">Features</a>
             <a href="#how">How it works</a>
@@ -240,7 +242,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="lp-foot">
         <div className="lp-foot-in">
-          <Logo variant="light" size={26} />
+          <Logo variant="dark" size={26} />
           <div className="lp-foot-links">
             <a href="#features">Features</a>
             <a href="#how">How it works</a>

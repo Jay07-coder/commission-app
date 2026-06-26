@@ -231,3 +231,39 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:va
 .lp-foot-links a{color:#64748b;font-size:14px}
 .lp-foot-links a:hover{color:var(--ink)}
 .lp-foot small{color:#94a3b8;font-size:13px}
+
+/* ============================================================
+   Immersive 3D dark / glass theme (.lp-immersive)
+   ============================================================ */
+.lp-immersive{position:relative;color:#cdd9ea;min-height:100vh;background:
+  radial-gradient(900px 600px at 78% 8%,rgba(37,99,235,.20),transparent 60%),
+  radial-gradient(800px 520px at 4% 26%,rgba(37,99,235,.12),transparent 55%),
+  linear-gradient(180deg,#070d1a,#0a1426 55%,#060c18)}
+.lp-immersive header,.lp-immersive section,.lp-immersive footer{position:relative;z-index:1}
+.lp-immersive .lp-mock{display:none}
+.lp-immersive .lp-hero{background:transparent;min-height:92vh;display:flex;flex-direction:column;justify-content:center}
+.lp-immersive .lp-nav{background:rgba(8,15,30,.62);border-bottom-color:rgba(255,255,255,.08)}
+.lp-immersive .lp-nav-links a{color:#aebfd4}
+.lp-immersive .lp-nav-links a:hover{color:#fff}
+.lp-immersive .lp-blink{color:#cdd9ea}
+.lp-immersive .lp-blink:hover{color:#fff}
+.lp-immersive .lp-h1,.lp-immersive .lp-h2{color:#fff}
+.lp-immersive .lp-sub,.lp-immersive .lp-hero-note{color:#aebfd4}
+.lp-immersive .lp-lead{color:#9fb1c8}
+.lp-immersive .lp-feat,.lp-immersive .lp-step,.lp-immersive .lp-contact-card,.lp-immersive .lp-spot-vis,.lp-immersive .lp-price{
+  background:rgba(17,29,52,.55);border-color:rgba(255,255,255,.09);backdrop-filter:blur(10px);box-shadow:0 22px 54px -32px rgba(0,0,0,.75)}
+.lp-immersive .lp-feat:hover{transform:translateY(-4px);border-color:rgba(96,165,250,.55);box-shadow:0 28px 64px -28px rgba(0,0,0,.85)}
+.lp-immersive .lp-feat h3,.lp-immersive .lp-spot h3,.lp-immersive .lp-step h3,.lp-immersive .lp-contact-card h3{color:#fff}
+.lp-immersive .lp-feat p,.lp-immersive .lp-spot p,.lp-immersive .lp-step p,.lp-immersive .lp-contact-card p{color:#9fb1c8}
+.lp-immersive .lp-spot li{color:#c3d0e2}
+.lp-immersive .lp-ico{background:rgba(37,99,235,.20);color:#7eb0ff}
+.lp-immersive #how{background:transparent !important;border-color:rgba(255,255,255,.08) !important}
+.lp-immersive .lp-btn-ghost{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:#fff;box-shadow:none}
+.lp-immersive .lp-btn-ghost:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.32)}
+.lp-immersive .lp-step .n{background:#2563eb}
+.lp-immersive .lp-stats{background:rgba(11,24,45,.6);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px)}
+.lp-immersive .lp-cta{background:radial-gradient(700px 300px at 50% 120%,rgba(37,99,235,.45),transparent 60%),rgba(10,20,40,.55);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px)}
+.lp-immersive .lp-foot{border-top-color:rgba(255,255,255,.08)}
+.lp-immersive .lp-foot-links a{color:#9fb1c8}
+.lp-immersive .lp-foot-links a:hover{color:#fff}
+.lp-immersive .lp-foot small{color:#7e90ab}
