@@ -361,6 +361,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:va
 .lp-faq[open] summary::after{content:"\2212"}
 .lp-faq p{margin:0;padding:0 22px 20px;color:#9fb1c8;font-size:14.5px;line-height:1.65}
 
+/* legal pages */
+.legal-top{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:10}
+.legal-top a.back{color:var(--muted);font-size:14px;font-weight:500}
+.legal-top a.back:hover{color:var(--ink)}
+.legal{max-width:780px;margin:0 auto;padding:44px 24px 90px}
+.legal h1{font-size:clamp(26px,4vw,34px);margin:0 0 6px;letter-spacing:-.6px;color:var(--ink)}
+.legal .upd{color:var(--muted);font-size:13px;margin:0 0 32px}
+.legal h2{font-size:19px;margin:34px 0 10px;color:var(--ink);letter-spacing:-.2px}
+.legal p,.legal li{color:#334155;font-size:15px;line-height:1.75}
+.legal ul{padding-left:20px;margin:8px 0}
+.legal li{margin:5px 0}
+.legal a{color:var(--accent)}
+.legal strong{color:var(--ink)}
+
 /* ============================================================
    ELITE animated graphics
    ============================================================ */

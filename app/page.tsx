@@ -383,6 +383,8 @@ export default function LandingPage() {
             <a href="#features">Features</a>
             <a href="#how">How it works</a>
             <a href="#pricing">Pricing</a>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
             <Link href="/login">Log in</Link>
           </div>
           <small>© {new Date().getFullYear()} SplitKey · Commission management for brokerages</small>
