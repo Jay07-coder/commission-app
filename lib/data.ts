@@ -148,3 +148,24 @@ export async function getMyAgent(): Promise<MyAgent | null> {
     capPaid: Number(r.cap_paid),
   };
 }
+
+/** Look up an agent by name — used by admins to view any agent's portal. */
+export async function getAgentByName(name: string): Promise<MyAgent | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("agents")
+    .select("name, tier, base_split, zillow_split, cap, cap_paid")
+    .eq("name", name)
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  const r = data as { name: string; tier: string; base_split: number; zillow_split: number | null; cap: number; cap_paid: number };
+  return {
+    name: r.name,
+    tier: r.tier,
+    baseSplit: Number(r.base_split),
+    zillowSplit: r.zillow_split == null ? null : Number(r.zillow_split),
+    cap: Number(r.cap),
+    capPaid: Number(r.cap_paid),
+  };
+}
