@@ -6,7 +6,8 @@ import type { Txn } from "@/lib/transactions";
 
 const THRESHOLD = 600;
 
-export default function TaxSummary({ deals }: { deals: Txn[] }) {
+export default function TaxSummary({ deals, w9Names = [] }: { deals: Txn[]; w9Names?: string[] }) {
+  const w9Set = useMemo(() => new Set(w9Names), [w9Names]);
   const yearOf = (t: Txn) => (t.close_date || t.created_at || "").slice(0, 4);
 
   const years = useMemo(() => {
@@ -34,6 +35,7 @@ export default function TaxSummary({ deals }: { deals: Txn[] }) {
 
   const required = rows.filter((r) => r.total >= THRESHOLD);
   const totalPaid = rows.reduce((s, r) => s + r.total, 0);
+  const missingW9 = required.filter((r) => !w9Set.has(r.agent)).length;
 
   return (
     <>
@@ -47,7 +49,7 @@ export default function TaxSummary({ deals }: { deals: Txn[] }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 20 }}>
         <Kpi label="Agents needing a 1099" value={String(required.length)} accent="#2563eb" sub={`paid $${THRESHOLD}+ in ${year}`} />
         <Kpi label="Total nonemployee comp" value={money(totalPaid)} accent="#16a34a" sub={`paid to ${rows.length} agent${rows.length === 1 ? "" : "s"}`} />
-        <Kpi label="Below threshold" value={String(rows.length - required.length)} accent="#94a3b8" sub="no 1099 required" />
+        <Kpi label="Missing W-9" value={String(missingW9)} accent={missingW9 ? "#dc2626" : "#16a34a"} sub="of those needing a 1099" />
       </div>
 
       <div className="card">
@@ -65,6 +67,7 @@ export default function TaxSummary({ deals }: { deals: Txn[] }) {
                 <th style={{ ...th, textAlign: "right" }}>Deals</th>
                 <th style={{ ...th, textAlign: "right" }}>Box 1 — paid</th>
                 <th style={{ ...th, textAlign: "center" }}>1099 required?</th>
+                <th style={{ ...th, textAlign: "center" }}>W-9 on file?</th>
               </tr>
             </thead>
             <tbody>
@@ -77,6 +80,13 @@ export default function TaxSummary({ deals }: { deals: Txn[] }) {
                     {r.total >= THRESHOLD
                       ? <span className="pill" style={{ background: "#ecfdf5", color: "#047857" }}>Yes</span>
                       : <span className="pill" style={{ background: "#f1f5f9", color: "#64748b" }}>No</span>}
+                  </td>
+                  <td style={{ ...td, textAlign: "center" }}>
+                    {w9Set.has(r.agent)
+                      ? <span className="pill" style={{ background: "#ecfdf5", color: "#047857" }}>✓ On file</span>
+                      : r.total >= THRESHOLD
+                        ? <span className="pill" style={{ background: "#fef2f2", color: "#b91c1c" }}>Missing</span>
+                        : <span className="muted">—</span>}
                   </td>
                 </tr>
               ))}
