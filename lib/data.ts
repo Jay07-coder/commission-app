@@ -116,3 +116,35 @@ export async function getStatements(): Promise<StatementRow[]> {
     .limit(500);
   return (data as StatementRow[] | null) ?? [];
 }
+
+export interface MyAgent {
+  name: string;
+  tier: string;
+  baseSplit: number;
+  zillowSplit: number | null;
+  cap: number;
+  capPaid: number;
+}
+
+/** The agent record linked to the signed-in user, matched by email (case-insensitive). Null if not linked. */
+export async function getMyAgent(): Promise<MyAgent | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) return null;
+  const { data } = await supabase
+    .from("agents")
+    .select("name, tier, base_split, zillow_split, cap, cap_paid")
+    .ilike("email", user.email)
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  const r = data as { name: string; tier: string; base_split: number; zillow_split: number | null; cap: number; cap_paid: number };
+  return {
+    name: r.name,
+    tier: r.tier,
+    baseSplit: Number(r.base_split),
+    zillowSplit: r.zillow_split == null ? null : Number(r.zillow_split),
+    cap: Number(r.cap),
+    capPaid: Number(r.cap_paid),
+  };
+}

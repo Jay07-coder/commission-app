@@ -33,6 +33,27 @@ export async function listAllForReports(): Promise<Txn[]> {
   return all;
 }
 
+/** All deals belonging to one agent (by name) — for the agent's own portal. RLS also enforces scope. */
+export async function listMyDeals(agentName: string): Promise<Txn[]> {
+  const supabase = await createClient();
+  const cols =
+    "id, stage, agent_name, source_name, property_address, valuation, commission_pct, close_date, created_at, net_to_agent, net_to_charles, net_to_brokerage, result, side, client, city, zipcode, external_status, imported";
+  const all: Txn[] = [];
+  const pageSize = 1000;
+  for (let from = 0; from < 20000; from += pageSize) {
+    const { data, error } = await supabase
+      .from("transactions")
+      .select(cols)
+      .eq("agent_name", agentName)
+      .order("close_date", { ascending: false, nullsFirst: false })
+      .range(from, from + pageSize - 1);
+    if (error || !data || data.length === 0) break;
+    all.push(...(data as unknown as Txn[]));
+    if (data.length < pageSize) break;
+  }
+  return all;
+}
+
 export async function getTransaction(id: string): Promise<{ txn: Txn | null; notes: TxnNote[] }> {
   const supabase = await createClient();
   const { data: txn } = await supabase.from("transactions").select("*").eq("id", id).single();
