@@ -60,17 +60,17 @@ export default function LandingPage() {
       {/* HERO */}
       <section className="lp-hero">
         <div className="lp-wrap">
-          <span className="lp-eyebrow" data-reveal>★ Built for real-estate brokerages</span>
-          <h1 className="lp-h1" data-reveal style={{ ["--d" as any]: "90ms" }}>Run every commission like clockwork.</h1>
-          <p className="lp-sub" data-reveal style={{ ["--d" as any]: "180ms" }}>
+          <span className="lp-eyebrow">★ Built for real-estate brokerages</span>
+          <h1 className="lp-h1">Run every commission like clockwork.</h1>
+          <p className="lp-sub">
             SplitKey is the all-in-one commission platform for brokerages. Calculate splits, route approvals,
             pay agents, and file 1099s, all in one place.
           </p>
-          <div className="lp-hero-cta" data-reveal style={{ ["--d" as any]: "260ms" }}>
+          <div className="lp-hero-cta">
             <Link href="/login" className="lp-btn lp-btn-primary lp-btn-lg">Get started free</Link>
             <a href="#features" className="lp-btn lp-btn-ghost lp-btn-lg">See features</a>
           </div>
-          <div className="lp-hero-note" data-reveal style={{ ["--d" as any]: "320ms" }}>✓ No spreadsheets &nbsp;·&nbsp; ✓ Set up in minutes &nbsp;·&nbsp; ✓ Your data, isolated &amp; secure</div>
+          <div className="lp-hero-note">✓ No spreadsheets &nbsp;·&nbsp; ✓ Set up in minutes &nbsp;·&nbsp; ✓ Your data, isolated &amp; secure</div>
 
           {/* Dashboard mock */}
           <div className="lp-mock">
