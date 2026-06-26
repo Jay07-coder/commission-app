@@ -208,6 +208,17 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:va
 .lp-price li svg{width:18px;height:18px;color:var(--accent);flex:none;margin-top:1px}
 .lp-price .lp-btn{margin-top:auto;justify-content:center}
 
+/* Contact / demo cards */
+.lp-contact{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:780px;margin:0 auto}
+.lp-contact-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:32px 28px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;box-shadow:var(--shadow-sm)}
+.lp-contact-card.pop{border-color:var(--accent);box-shadow:0 24px 50px -28px rgba(37,99,235,.5)}
+.lp-contact-card .lp-ico{margin:0 0 16px}
+.lp-contact-card h3{margin:0 0 8px;font-size:19px;font-weight:700;color:#0b1220}
+.lp-contact-card p{margin:0 0 22px;color:#54607a;font-size:14.5px;line-height:1.6;max-width:300px}
+.lp-contact-card .lp-btn{width:100%;justify-content:center}
+@media(max-width:680px){.lp-contact{grid-template-columns:1fr;max-width:420px}}
+
 /* CTA + footer */
 .lp-cta{background:
    radial-gradient(700px 300px at 50% 120%,rgba(37,99,235,.5),transparent 60%),var(--navy);

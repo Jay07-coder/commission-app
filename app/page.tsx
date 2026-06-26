@@ -25,11 +25,14 @@ const FEATURES = [
   { ic: I.shield, t: "Roles & bank-grade security", b: "Owner, broker, coordinator, accountant, and agent roles — each with the right access — and full per-brokerage data isolation." },
 ];
 
-const TIERS = [
-  { name: "Starter", price: "$49", pop: false, dsc: "For solo brokers and small teams getting organized.", feats: ["Up to 10 agents", "Commission engine & statements", "Deal board with approvals", "Agent portal", "Email support"] },
-  { name: "Professional", price: "$149", pop: true, dsc: "For growing brokerages that want the full toolkit.", feats: ["Up to 50 agents", "Everything in Starter", "Reports & KPI dashboards", "AI copilot", "Zillow zip targeting + map", "Roles & team management"] },
-  { name: "Brokerage", price: "$349", pop: false, dsc: "For established brokerages running at scale.", feats: ["Unlimited agents", "Everything in Professional", "1099 & W-9 tax suite", "Custom domain & branding", "Priority support"] },
-];
+// 👉 Paste your Calendly link here when ready (e.g. "https://calendly.com/your-handle/demo").
+// Until then, "Book a demo" opens an email to request one.
+const CALENDLY_URL = "";
+const CONTACT_HREF = "mailto:jay@topagentmi.com?subject=SplitKey%20inquiry";
+const DEMO_HREF = CALENDLY_URL || "mailto:jay@topagentmi.com?subject=SplitKey%20demo%20request";
+
+const mailIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>;
+const calIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>;
 
 export default function LandingPage() {
   return (
@@ -202,25 +205,25 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PRICING */}
+      {/* PRICING / CONTACT */}
       <section id="pricing" className="lp-section">
         <div className="lp-wrap">
           <div className="lp-kicker">Pricing</div>
-          <h2 className="lp-h2">Simple plans that scale with your brokerage</h2>
-          <p className="lp-lead">Every plan includes secure cloud hosting and your own branded workspace. Annual billing saves ~2 months.</p>
-          <div className="lp-prices">
-            {TIERS.map((t) => (
-              <div className={`lp-price${t.pop ? " pop" : ""}`} key={t.name}>
-                {t.pop && <span className="lp-pop-tag">Most popular</span>}
-                <h3>{t.name}</h3>
-                <div className="pr">{t.price}<small> /mo</small></div>
-                <p className="dsc">{t.dsc}</p>
-                <ul>
-                  {t.feats.map((f) => <li key={f}>{check}<span>{f}</span></li>)}
-                </ul>
-                <Link href="/login" className={`lp-btn ${t.pop ? "lp-btn-primary" : "lp-btn-ghost"}`}>Get started</Link>
-              </div>
-            ))}
+          <h2 className="lp-h2">Pricing built around your brokerage</h2>
+          <p className="lp-lead">Every brokerage runs differently. Tell us about yours and we’ll tailor a plan — or see SplitKey live on your own numbers in a quick demo.</p>
+          <div className="lp-contact">
+            <div className="lp-contact-card">
+              <div className="lp-ico">{mailIcon}</div>
+              <h3>Contact the team</h3>
+              <p>Questions about features, onboarding, or a custom plan? We’ll get back to you fast.</p>
+              <a className="lp-btn lp-btn-ghost" href={CONTACT_HREF}>Email the team</a>
+            </div>
+            <div className="lp-contact-card pop">
+              <div className="lp-ico">{calIcon}</div>
+              <h3>Schedule a demo</h3>
+              <p>See it in 20 minutes — splits, reports, AI, and 1099s walked through end to end.</p>
+              <a className="lp-btn lp-btn-primary" href={DEMO_HREF} {...(CALENDLY_URL ? { target: "_blank", rel: "noopener noreferrer" } : {})}>Book a demo</a>
+            </div>
           </div>
         </div>
       </section>
