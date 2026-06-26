@@ -15,7 +15,7 @@ export default function NavTabs({ canManageTeam = false, role = "" }: { canManag
     role === "agent"
       ? [PORTAL]
       : canManageTeam
-        ? [...BASE, { href: "/app/reports", label: "Reports" }, { href: "/app/map", label: "Map" }, PORTAL, { href: "/app/team", label: "Team" }]
+        ? [...BASE, { href: "/app/reports", label: "Reports" }, { href: "/app/map", label: "Map" }, { href: "/app/tax", label: "1099s" }, PORTAL, { href: "/app/team", label: "Team" }]
         : [...BASE, PORTAL];
   return (
     <>
