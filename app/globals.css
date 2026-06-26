@@ -341,6 +341,26 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:va
 .lp-quote .who b{color:#fff;font-size:14px;display:block}
 .lp-quote .who em{color:#8aa0c0;font-size:12.5px;font-style:normal}
 
+/* trust / security strip */
+.lp-trust{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:24px;border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;background:rgba(13,22,42,.5);backdrop-filter:blur(8px)}
+@media(max-width:760px){.lp-trust{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:440px){.lp-trust{grid-template-columns:1fr}}
+.lp-trust>div{display:flex;gap:12px;align-items:flex-start}
+.lp-trust svg{width:22px;height:22px;color:#7eb0ff;flex:none;margin-top:2px}
+.lp-trust b{display:block;color:#fff;font-size:14px;margin-bottom:2px}
+.lp-trust span{color:#9fb1c8;font-size:12.5px;line-height:1.45}
+
+/* FAQ */
+.lp-faqs{max-width:780px;margin:36px auto 0;display:grid;gap:12px}
+.lp-faq{border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(17,29,52,.5);backdrop-filter:blur(8px);overflow:hidden}
+.lp-faq summary{list-style:none;cursor:pointer;padding:18px 22px;font-size:16px;font-weight:600;color:#fff;
+  display:flex;justify-content:space-between;align-items:center;gap:14px}
+.lp-faq summary::-webkit-details-marker{display:none}
+.lp-faq summary::after{content:"+";font-size:24px;line-height:1;color:#7eb0ff;font-weight:400;flex:none}
+.lp-faq[open] summary::after{content:"\2212"}
+.lp-faq p{margin:0;padding:0 22px 20px;color:#9fb1c8;font-size:14.5px;line-height:1.65}
+
 /* ============================================================
    ELITE animated graphics
    ============================================================ */

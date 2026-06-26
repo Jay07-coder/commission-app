@@ -36,6 +36,11 @@ const DEMO_HREF = CALENDLY_URL || "mailto:jay@topagentmi.com?subject=SplitKey%20
 const mailIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>;
 const calIcon = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>;
 
+const tShield = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>;
+const tLock = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>;
+const tUsers = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M16 5.5a3 3 0 0 1 0 5.8"/><path d="M18 15c2.2.4 3.5 1.8 3.5 4"/></svg>;
+const tNoSell = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+
 export default function LandingPage() {
   return (
     <div className="lp lp-immersive">
@@ -312,6 +317,16 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* TRUST / SECURITY */}
+      <section className="lp-wrap">
+        <div className="lp-trust" data-reveal>
+          <div>{tShield}<div><b>Encrypted at rest</b><span>Every record stored with bank-grade encryption.</span></div></div>
+          <div>{tLock}<div><b>Per-brokerage isolation</b><span>Database row-level security keeps your data yours.</span></div></div>
+          <div>{tUsers}<div><b>Role-based access</b><span>Owners, brokers, and agents each see only what they should.</span></div></div>
+          <div>{tNoSell}<div><b>Never sold</b><span>Your brokerage&apos;s data is never shared or sold. Ever.</span></div></div>
+        </div>
+      </section>
+
       {/* PRICING / CONTACT */}
       <section id="pricing" className="lp-section">
         <div className="lp-wrap">
@@ -331,6 +346,22 @@ export default function LandingPage() {
               <p>See it in 20 minutes. Splits, reports, AI, and 1099s walked through end to end.</p>
               <a className="lp-btn lp-btn-primary" href={DEMO_HREF} {...(CALENDLY_URL ? { target: "_blank", rel: "noopener noreferrer" } : {})}>Book a demo</a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="lp-section">
+        <div className="lp-wrap">
+          <div className="lp-kicker" data-reveal>FAQ</div>
+          <h2 className="lp-h2" data-reveal style={{ ["--d" as any]: "70ms" }}>Questions, answered</h2>
+          <div className="lp-faqs">
+            <details className="lp-faq" data-reveal><summary>How long does setup take?</summary><p>Most brokerages are live the same day. Add your agents and their split rules once and you&apos;re calculating commissions immediately — and we can import your existing deal history so your reports are accurate from day one.</p></details>
+            <details className="lp-faq" data-reveal><summary>Can I import my existing deals?</summary><p>Yes. We can bulk-import your full history — every deal, every column — so your reporting, agent earnings, and 1099 totals are right from the start.</p></details>
+            <details className="lp-faq" data-reveal><summary>Is my data secure?</summary><p>Your data is encrypted at rest, isolated to your brokerage with database row-level security, and never sold. Agents only ever see their own deals and earnings.</p></details>
+            <details className="lp-faq" data-reveal><summary>Do my agents need training?</summary><p>No. Agents simply log in to a clean portal showing their deals, earnings, and cap progress. Most never need a walkthrough.</p></details>
+            <details className="lp-faq" data-reveal><summary>Can SplitKey handle our custom split rules?</summary><p>Yes — per-agent and per-lead-source splits, annual caps, royalties, referral fees, E&amp;O, and compliance deductions are all configurable, so the numbers match how your brokerage actually pays.</p></details>
+            <details className="lp-faq" data-reveal><summary>What about W-9s and 1099s?</summary><p>Agents self-onboard their W-9 when they join, and SplitKey tallies year-end 1099-NEC totals automatically — including agents who left mid-year.</p></details>
           </div>
         </div>
       </section>
