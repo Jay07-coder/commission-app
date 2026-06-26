@@ -100,8 +100,8 @@ export default function LandingPage() {
       {/* STATS */}
       <section className="lp-wrap" style={{ marginTop: 8 }}>
         <div className="lp-stats" data-reveal>
-          <div><b>$18.9M+</b><span>commissions tracked</span></div>
-          <div><b>3,050</b><span>deals processed</span></div>
+          <div><b data-count="18.9" data-prefix="$" data-suffix="M+" data-dec="1">$18.9M+</b><span>commissions tracked</span></div>
+          <div><b data-count="3050" data-comma="1">3,050</b><span>deals processed</span></div>
           <div><b>1</b><span>source of truth for your brokerage</span></div>
         </div>
       </section>
