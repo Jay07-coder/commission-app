@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-/* Cosmic particle backdrop (textura-style): a flowing gradient wave-ribbon of
-   glowing points, a particle orb, and a starfield. Reacts to mouse + scroll.
-   Three.js via CDN. */
+/* Morphing cosmic particle system (textura-style). One point-cloud that
+   reassembles between formations as you scroll the whole page:
+   orb -> flowing wave -> galaxy -> vortex. Reacts to mouse + scroll. */
 export default function Scene3D() {
   const ref = useRef<HTMLCanvasElement>(null);
 
@@ -18,7 +18,7 @@ export default function Scene3D() {
       const cv = document.createElement("canvas"); cv.width = cv.height = 64;
       const x = cv.getContext("2d")!;
       const g = x.createRadialGradient(32, 32, 0, 32, 32, 32);
-      g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.35, "rgba(255,255,255,0.55)"); g.addColorStop(1, "rgba(255,255,255,0)");
+      g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.35, "rgba(255,255,255,0.5)"); g.addColorStop(1, "rgba(255,255,255,0)");
       x.fillStyle = g; x.fillRect(0, 0, 64, 64);
       return new THREE.CanvasTexture(cv);
     }
@@ -32,89 +32,82 @@ export default function Scene3D() {
       renderer.setSize(W(), H());
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x04060e, 0.03);
+      scene.fog = new THREE.FogExp2(0x04060e, 0.028);
       const camera = new THREE.PerspectiveCamera(55, W() / H(), 0.1, 120);
-      camera.position.set(0, 4.4, 9);
+      camera.position.set(0, 0.6, 9.2);
 
-      const glow = glowTex(THREE);
       const big = W() > 768;
+      const N = big ? 9000 : 4200;
+
       const cBlue = new THREE.Color("#2f6dff");
-      const cPurple = new THREE.Color("#a855f7");
+      const cPurple = new THREE.Color("#b15cff");
       const cRed = new THREE.Color("#ff4d6d");
-      const grad = (tx: number) => (tx < 0.5 ? cBlue.clone().lerp(cPurple, tx * 2) : cPurple.clone().lerp(cRed, (tx - 0.5) * 2));
+      const grad = (u: number) => (u < 0.5 ? cBlue.clone().lerp(cPurple, u * 2) : cPurple.clone().lerp(cRed, (u - 0.5) * 2));
 
-      // ---- flowing particle wave ----
-      const COLS = big ? 180 : 110, ROWS = big ? 60 : 40, COUNT = COLS * ROWS;
-      const wpos = new Float32Array(COUNT * 3);
-      const wcol = new Float32Array(COUNT * 3);
-      const base = new Float32Array(COUNT * 2);
-      let k = 0;
-      for (let i = 0; i < COLS; i++) {
-        for (let j = 0; j < ROWS; j++) {
-          const x = -15 + (i / (COLS - 1)) * 30;
-          const z = -17 + (j / (ROWS - 1)) * 19;
-          base[k * 2] = x; base[k * 2 + 1] = z;
-          wpos[k * 3] = x; wpos[k * 3 + 1] = 0; wpos[k * 3 + 2] = z;
-          const c = grad(i / (COLS - 1));
-          wcol[k * 3] = c.r; wcol[k * 3 + 1] = c.g; wcol[k * 3 + 2] = c.b;
-          k++;
-        }
+      // formations
+      const sphere = new Float32Array(N * 3);
+      const wave = new Float32Array(N * 3);
+      const wbase = new Float32Array(N * 2);
+      const galaxy = new Float32Array(N * 3);
+      const vortex = new Float32Array(N * 3);
+      const colors = new Float32Array(N * 3);
+      const cols = Math.ceil(Math.sqrt(N * 1.7));
+      const rows = Math.ceil(N / cols);
+
+      for (let i = 0; i < N; i++) {
+        const u = i / N, i3 = i * 3;
+        // orb (fibonacci sphere)
+        const sy = 1 - 2 * u, sr = Math.sqrt(Math.max(0, 1 - sy * sy)), phi = i * 2.399963, R = 3.35;
+        sphere[i3] = Math.cos(phi) * sr * R; sphere[i3 + 1] = sy * R; sphere[i3 + 2] = Math.sin(phi) * sr * R;
+        // wave grid (y animated at runtime)
+        const ix = i % cols, iz = Math.floor(i / cols);
+        const wx = (ix / (cols - 1) - 0.5) * 12, wz = (iz / (rows - 1) - 0.5) * 12;
+        wbase[i * 2] = wx; wbase[i * 2 + 1] = wz;
+        wave[i3] = wx; wave[i3 + 1] = 0; wave[i3 + 2] = wz;
+        // galaxy (spiral arms + core)
+        const gt = Math.pow(u, 0.72), arm = i % 3;
+        const ga = gt * 7 * Math.PI + arm * (2.0944) + (Math.random() - 0.5) * 0.35, gr = gt * 4.4;
+        galaxy[i3] = Math.cos(ga) * gr; galaxy[i3 + 1] = (Math.random() - 0.5) * (0.7 * (1 - gt) + 0.12); galaxy[i3 + 2] = Math.sin(ga) * gr;
+        // vortex (spiral cone)
+        const va = u * 17 * Math.PI, vr = 0.45 + u * 2.9;
+        vortex[i3] = Math.cos(va) * vr; vortex[i3 + 1] = (u - 0.5) * 7.6; vortex[i3 + 2] = Math.sin(va) * vr;
+        // color
+        const c = grad(u); colors[i3] = c.r; colors[i3 + 1] = c.g; colors[i3 + 2] = c.b;
       }
-      const waveGeo = new THREE.BufferGeometry();
-      waveGeo.setAttribute("position", new THREE.BufferAttribute(wpos, 3));
-      waveGeo.setAttribute("color", new THREE.BufferAttribute(wcol, 3));
-      const waveMat = new THREE.PointsMaterial({ size: 0.14, map: glow, vertexColors: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
-      const wave = new THREE.Points(waveGeo, waveMat);
-      scene.add(wave);
 
-      // ---- particle orb ----
-      const SP = big ? 5200 : 2600;
-      const spos = new Float32Array(SP * 3);
-      const scol = new Float32Array(SP * 3);
-      for (let i = 0; i < SP; i++) {
-        const y = 1 - (i / (SP - 1)) * 2;
-        const r = Math.sqrt(Math.max(0, 1 - y * y));
-        const phi = i * 2.399963;
-        const rad = 3.05 + (Math.random() - 0.5) * 0.18;
-        spos[i * 3] = Math.cos(phi) * r * rad;
-        spos[i * 3 + 1] = y * rad;
-        spos[i * 3 + 2] = Math.sin(phi) * r * rad;
-        const c = grad((y + 1) / 2);
-        scol[i * 3] = c.r; scol[i * 3 + 1] = c.g; scol[i * 3 + 2] = c.b;
-      }
-      const orbGeo = new THREE.BufferGeometry();
-      orbGeo.setAttribute("position", new THREE.BufferAttribute(spos, 3));
-      orbGeo.setAttribute("color", new THREE.BufferAttribute(scol, 3));
-      const orbMat = new THREE.PointsMaterial({ size: 0.105, map: glow, vertexColors: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
-      const orb = new THREE.Points(orbGeo, orbMat);
-      const orbGroup = new THREE.Group();
-      orbGroup.add(orb);
-      orbGroup.position.set(big ? 5.4 : 0, big ? 3.4 : 5.4, -3.5);
-      orbGroup.scale.setScalar(big ? 1 : 0.62);
-      scene.add(orbGroup);
+      const cur = new Float32Array(sphere); // start as orb
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(cur, 3));
+      geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({ size: 0.135, map: glowTex(THREE), vertexColors: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+      const points = new THREE.Points(geo, mat);
+      const group = new THREE.Group();
+      group.add(points);
+      scene.add(group);
 
-      // ---- starfield ----
-      const ST = big ? 900 : 400;
+      // starfield
+      const ST = big ? 700 : 320;
       const stp = new Float32Array(ST * 3);
-      for (let i = 0; i < ST; i++) { stp[i * 3] = (Math.random() - 0.5) * 60; stp[i * 3 + 1] = (Math.random() - 0.5) * 40; stp[i * 3 + 2] = (Math.random() - 0.5) * 30 - 8; }
+      for (let i = 0; i < ST; i++) { stp[i * 3] = (Math.random() - 0.5) * 70; stp[i * 3 + 1] = (Math.random() - 0.5) * 45; stp[i * 3 + 2] = (Math.random() - 0.5) * 30 - 10; }
       const starGeo = new THREE.BufferGeometry();
       starGeo.setAttribute("position", new THREE.BufferAttribute(stp, 3));
-      const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ map: glow, color: 0x9fb6ff, size: 0.07, transparent: true, opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending }));
+      const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ map: glowTex(THREE), color: 0x9fb6ff, size: 0.08, transparent: true, opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending }));
       scene.add(stars);
 
-      // ---- interaction ----
-      let tmx = 0, tmy = 0, mx = 0, my = 0, scrollY = 0;
+      const forms = [sphere, wave, galaxy, vortex];
+
+      let tmx = 0, tmy = 0, mx = 0, my = 0, tScroll = 0, sScroll = 0;
       const onMouse = (e: MouseEvent) => { tmx = e.clientX / W() - 0.5; tmy = e.clientY / H() - 0.5; };
-      const onScroll = () => { scrollY = window.scrollY; };
+      const onScroll = () => { const max = (document.body.scrollHeight - window.innerHeight) || 1; tScroll = Math.min(window.scrollY / max, 1); };
       const onResize = () => { camera.aspect = W() / H(); camera.updateProjectionMatrix(); renderer.setSize(W(), H()); };
       window.addEventListener("mousemove", onMouse);
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onResize);
+      onScroll();
       cleanups.push(() => { window.removeEventListener("mousemove", onMouse); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onResize); });
 
       const clock = new THREE.Clock();
       const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
-      const wp = waveGeo.attributes.position.array as Float32Array;
 
       function animate() {
         if (disposed) return;
@@ -122,38 +115,52 @@ export default function Scene3D() {
         const t = clock.getElapsedTime();
         const rev = easeOut(Math.min(t / 2.0, 1));
         mx += (tmx - mx) * 0.045; my += (tmy - my) * 0.045;
-        const max = (document.body.scrollHeight - window.innerHeight) || 1;
-        const sp = Math.min(scrollY / max, 1);
+        sScroll += (tScroll - sScroll) * 0.06;          // smoothed scroll
+        const sp = sScroll;
 
-        // animate the wave surface
-        for (let n = 0; n < COUNT; n++) {
-          const x = base[n * 2], z = base[n * 2 + 1];
-          wp[n * 3 + 1] =
-            Math.sin(x * 0.38 + t * 0.8) * 0.55 +
-            Math.sin(z * 0.5 + t * 0.62) * 0.5 +
-            Math.sin((x + z) * 0.28 + t * 1.05) * 0.38;
+        // formation blend
+        const f = sp * (forms.length - 1);
+        const i0 = Math.min(forms.length - 1, Math.floor(f));
+        const i1 = Math.min(forms.length - 1, i0 + 1);
+        const fr = f - i0;
+        const A = forms[i0], B = forms[i1];
+        const wWeight = (i0 === 1 ? 1 - fr : 0) + (i1 === 1 ? fr : 0); // wave presence
+
+        for (let n = 0; n < N; n++) {
+          const n3 = n * 3;
+          let tx = A[n3] + (B[n3] - A[n3]) * fr;
+          let ty = A[n3 + 1] + (B[n3 + 1] - A[n3 + 1]) * fr;
+          let tz = A[n3 + 2] + (B[n3 + 2] - A[n3 + 2]) * fr;
+          if (wWeight > 0.001) {
+            const bx = wbase[n * 2], bz = wbase[n * 2 + 1];
+            const wy = Math.sin(bx * 0.4 + t * 0.8) * 0.55 + Math.sin(bz * 0.5 + t * 0.62) * 0.5 + Math.sin((bx + bz) * 0.28 + t * 1.05) * 0.36;
+            ty += wy * wWeight;
+          }
+          // subtle life
+          ty += Math.sin(tx * 0.5 + t * 0.9) * 0.04;
+          cur[n3] += (tx - cur[n3]) * 0.075;
+          cur[n3 + 1] += (ty - cur[n3 + 1]) * 0.075;
+          cur[n3 + 2] += (tz - cur[n3 + 2]) * 0.075;
         }
-        waveGeo.attributes.position.needsUpdate = true;
-        waveMat.opacity = 0.92 * rev;
-        orbMat.opacity = 0.95 * rev;
+        geo.attributes.position.needsUpdate = true;
+        mat.opacity = 0.95 * rev;
 
-        // orb spin + drift
-        orb.rotation.y = t * 0.16;
-        orb.rotation.x = Math.sin(t * 0.3) * 0.12;
-        orbGroup.position.y = (big ? 3.4 : 5.4) + Math.sin(t * 0.5) * 0.25;
-        stars.rotation.y = t * 0.01;
+        // move from right (hero) toward center for the content formations
+        group.position.x = 2.4 * (1 - Math.min(sp * 3, 1));
+        group.position.y = -sp * 0.6;
+        group.rotation.y = t * 0.04 + mx * 0.45;
+        group.rotation.x = my * 0.22;
+        stars.rotation.y = t * 0.012;
 
-        // cinematic camera: entrance dolly + fly-through on scroll + parallax
-        camera.position.z = (12 - 3 * rev) + sp * -7;
-        camera.position.y = 4.4 - sp * 3 + my * 1.1;
-        camera.position.x = mx * 1.6;
-        camera.lookAt(0, 0.6 - sp * 1.5, -3);
+        camera.position.x = mx * 1.3;
+        camera.position.y = 0.6 + my * 0.9;
+        camera.lookAt(0, 0, 0);
 
         renderer.render(scene, camera);
       }
       animate();
 
-      cleanups.push(() => { renderer.dispose(); waveGeo.dispose(); orbGeo.dispose(); starGeo.dispose(); });
+      cleanups.push(() => { renderer.dispose(); geo.dispose(); starGeo.dispose(); });
     }
 
     const existing = (window as any).THREE;
