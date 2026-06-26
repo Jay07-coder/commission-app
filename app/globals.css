@@ -248,7 +248,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:va
 .lp-immersive .lp-blink{color:#cdd9ea}
 .lp-immersive .lp-blink:hover{color:#fff}
 .lp-immersive .lp-h1,.lp-immersive .lp-h2{color:#fff}
+.lp-immersive .lp-h1{text-shadow:0 2px 34px rgba(3,9,20,.9),0 1px 4px rgba(3,9,20,.7)}
 .lp-immersive .lp-sub,.lp-immersive .lp-hero-note{color:#aebfd4}
+.lp-immersive .lp-sub{text-shadow:0 1px 18px rgba(3,9,20,.85)}
+.lp-immersive .lp-hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(820px 460px at 22% 52%,rgba(5,11,22,.88),rgba(5,11,22,.35) 45%,transparent 64%)}
 .lp-immersive .lp-lead{color:#9fb1c8}
 .lp-immersive .lp-feat,.lp-immersive .lp-step,.lp-immersive .lp-contact-card,.lp-immersive .lp-spot-vis,.lp-immersive .lp-price{
   background:rgba(17,29,52,.55);border-color:rgba(255,255,255,.09);backdrop-filter:blur(10px);box-shadow:0 22px 54px -32px rgba(0,0,0,.75)}
