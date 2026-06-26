@@ -32,7 +32,7 @@ export default function Scene3D() {
       renderer.setSize(W(), H());
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x04060e, 0.052);
+      scene.fog = new THREE.FogExp2(0x04060e, 0.03);
       const camera = new THREE.PerspectiveCamera(55, W() / H(), 0.1, 120);
       camera.position.set(0, 4.4, 9);
 
@@ -63,7 +63,7 @@ export default function Scene3D() {
       const waveGeo = new THREE.BufferGeometry();
       waveGeo.setAttribute("position", new THREE.BufferAttribute(wpos, 3));
       waveGeo.setAttribute("color", new THREE.BufferAttribute(wcol, 3));
-      const waveMat = new THREE.PointsMaterial({ size: 0.085, map: glow, vertexColors: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+      const waveMat = new THREE.PointsMaterial({ size: 0.14, map: glow, vertexColors: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
       const wave = new THREE.Points(waveGeo, waveMat);
       scene.add(wave);
 
@@ -85,7 +85,7 @@ export default function Scene3D() {
       const orbGeo = new THREE.BufferGeometry();
       orbGeo.setAttribute("position", new THREE.BufferAttribute(spos, 3));
       orbGeo.setAttribute("color", new THREE.BufferAttribute(scol, 3));
-      const orbMat = new THREE.PointsMaterial({ size: 0.07, map: glow, vertexColors: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+      const orbMat = new THREE.PointsMaterial({ size: 0.105, map: glow, vertexColors: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
       const orb = new THREE.Points(orbGeo, orbMat);
       const orbGroup = new THREE.Group();
       orbGroup.add(orb);
