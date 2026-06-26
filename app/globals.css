@@ -223,7 +223,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:va
 .lp-cta{background:
    radial-gradient(700px 300px at 50% 120%,rgba(37,99,235,.5),transparent 60%),var(--navy);
   border-radius:22px;padding:56px 28px;text-align:center;color:#fff}
-.lp-cta h2{font-size:clamp(26px,3.6vw,38px);font-weight:800;letter-spacing:-1px;margin:0 0 12px}
+.lp-cta h2{font-size:clamp(26px,3.6vw,38px);font-weight:800;letter-spacing:-1px;margin:0 0 12px;color:#fff}
 .lp-cta p{color:#b9c6d8;font-size:17px;margin:0 auto 26px;max-width:520px;line-height:1.6}
 .lp-foot{border-top:1px solid var(--line);margin-top:24px}
 .lp-foot-in{max-width:1140px;margin:0 auto;padding:34px 24px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
