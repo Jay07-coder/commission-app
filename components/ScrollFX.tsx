@@ -22,6 +22,14 @@ export default function ScrollFX() {
         { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
       );
       els.forEach((e) => io.observe(e));
+      // Instantly reveal anything already on screen (don't wait on the observer).
+      requestAnimationFrame(() => {
+        const vh = window.innerHeight;
+        els.forEach((e) => {
+          const r = e.getBoundingClientRect();
+          if (r.top < vh * 0.95 && r.bottom > 0) { e.classList.add("in"); io.unobserve(e); }
+        });
+      });
     }
 
     // ---- count-up numbers ----
