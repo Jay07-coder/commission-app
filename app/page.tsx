@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import Scene3D from "@/components/Scene3D";
+import ScrollFX from "@/components/ScrollFX";
 
 /* ---------- tiny inline icons ---------- */
 const I = {
@@ -39,6 +40,7 @@ export default function LandingPage() {
   return (
     <div className="lp lp-immersive">
       <Scene3D />
+      <ScrollFX />
       {/* NAV */}
       <header className="lp-nav">
         <div className="lp-nav-in">
@@ -58,17 +60,17 @@ export default function LandingPage() {
       {/* HERO */}
       <section className="lp-hero">
         <div className="lp-wrap">
-          <span className="lp-eyebrow">★ Built for real-estate brokerages</span>
-          <h1 className="lp-h1">Run every commission like clockwork.</h1>
-          <p className="lp-sub">
+          <span className="lp-eyebrow" data-reveal>★ Built for real-estate brokerages</span>
+          <h1 className="lp-h1" data-reveal style={{ ["--d" as any]: "90ms" }}>Run every commission like clockwork.</h1>
+          <p className="lp-sub" data-reveal style={{ ["--d" as any]: "180ms" }}>
             SplitKey is the all-in-one commission platform for brokerages. Calculate splits, route approvals,
             pay agents, and file 1099s, all in one place.
           </p>
-          <div className="lp-hero-cta">
+          <div className="lp-hero-cta" data-reveal style={{ ["--d" as any]: "260ms" }}>
             <Link href="/login" className="lp-btn lp-btn-primary lp-btn-lg">Get started free</Link>
             <a href="#features" className="lp-btn lp-btn-ghost lp-btn-lg">See features</a>
           </div>
-          <div className="lp-hero-note">✓ No spreadsheets &nbsp;·&nbsp; ✓ Set up in minutes &nbsp;·&nbsp; ✓ Your data, isolated &amp; secure</div>
+          <div className="lp-hero-note" data-reveal style={{ ["--d" as any]: "320ms" }}>✓ No spreadsheets &nbsp;·&nbsp; ✓ Set up in minutes &nbsp;·&nbsp; ✓ Your data, isolated &amp; secure</div>
 
           {/* Dashboard mock */}
           <div className="lp-mock">
@@ -97,7 +99,7 @@ export default function LandingPage() {
 
       {/* STATS */}
       <section className="lp-wrap" style={{ marginTop: 8 }}>
-        <div className="lp-stats">
+        <div className="lp-stats" data-reveal>
           <div><b>$18.9M+</b><span>commissions tracked</span></div>
           <div><b>3,050</b><span>deals processed</span></div>
           <div><b>1</b><span>source of truth for your brokerage</span></div>
@@ -107,12 +109,12 @@ export default function LandingPage() {
       {/* FEATURES */}
       <section id="features" className="lp-section">
         <div className="lp-wrap">
-          <div className="lp-kicker">Everything in one place</div>
-          <h2 className="lp-h2">One platform for the entire commission lifecycle</h2>
-          <p className="lp-lead">From the moment a deal is written to the day you file 1099s, SplitKey handles it.</p>
+          <div className="lp-kicker" data-reveal>Everything in one place</div>
+          <h2 className="lp-h2" data-reveal style={{ ["--d" as any]: "70ms" }}>One platform for the entire commission lifecycle</h2>
+          <p className="lp-lead" data-reveal style={{ ["--d" as any]: "140ms" }}>From the moment a deal is written to the day you file 1099s, SplitKey handles it.</p>
           <div className="lp-grid">
             {FEATURES.map((f) => (
-              <div className="lp-feat" key={f.t}>
+              <div className="lp-feat" data-reveal key={f.t}>
                 <div className="lp-ico">{f.ic}</div>
                 <h3>{f.t}</h3>
                 <p>{f.b}</p>
@@ -124,7 +126,7 @@ export default function LandingPage() {
 
       {/* SPOTLIGHT: AI */}
       <section className="lp-wrap">
-        <div className="lp-spot">
+        <div className="lp-spot" data-reveal>
           <div>
             <div className="lp-kicker" style={{ textAlign: "left" }}>AI copilot</div>
             <h3>Ask your brokerage anything.</h3>
@@ -147,7 +149,7 @@ export default function LandingPage() {
 
       {/* SPOTLIGHT: MAP */}
       <section className="lp-wrap">
-        <div className="lp-spot rev">
+        <div className="lp-spot rev" data-reveal>
           <div className="lp-spot-vis">
             <div className="lp-map">
               {["", "h1", "h2", "", "h1", "", "h2", "h4", "h3", "h1", "", "h1", "", "h2", "h3", "h2", "h1", "", "h1", "", "h2", "", "", "h1"].map((c, i) => (
@@ -171,7 +173,7 @@ export default function LandingPage() {
 
       {/* SPOTLIGHT: 1099 */}
       <section className="lp-wrap">
-        <div className="lp-spot">
+        <div className="lp-spot" data-reveal>
           <div>
             <div className="lp-kicker" style={{ textAlign: "left" }}>Tax season, sorted</div>
             <h3>1099s that practically file themselves.</h3>
@@ -196,13 +198,13 @@ export default function LandingPage() {
       {/* HOW IT WORKS */}
       <section id="how" className="lp-section" style={{ background: "#fff", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
         <div className="lp-wrap">
-          <div className="lp-kicker">How it works</div>
-          <h2 className="lp-h2">Up and running in three steps</h2>
-          <p className="lp-lead">No migration project. No consultants. Just your deals, calculated correctly.</p>
+          <div className="lp-kicker" data-reveal>How it works</div>
+          <h2 className="lp-h2" data-reveal style={{ ["--d" as any]: "70ms" }}>Up and running in three steps</h2>
+          <p className="lp-lead" data-reveal style={{ ["--d" as any]: "140ms" }}>No migration project. No consultants. Just your deals, calculated correctly.</p>
           <div className="lp-steps">
-            <div className="lp-step"><div className="n">1</div><h3>Add your deals</h3><p>Enter a transaction or import your history. Set each agent’s plan and lead-source rules once.</p></div>
-            <div className="lp-step"><div className="n">2</div><h3>SplitKey does the math</h3><p>Splits, caps, and fees calculate instantly. Route to your broker for one-click approval.</p></div>
-            <div className="lp-step"><div className="n">3</div><h3>Everyone stays in sync</h3><p>Agents see their earnings, you see the whole brokerage, and 1099s are ready at year-end.</p></div>
+            <div className="lp-step" data-reveal><div className="n">1</div><h3>Add your deals</h3><p>Enter a transaction or import your history. Set each agent’s plan and lead-source rules once.</p></div>
+            <div className="lp-step" data-reveal><div className="n">2</div><h3>SplitKey does the math</h3><p>Splits, caps, and fees calculate instantly. Route to your broker for one-click approval.</p></div>
+            <div className="lp-step" data-reveal><div className="n">3</div><h3>Everyone stays in sync</h3><p>Agents see their earnings, you see the whole brokerage, and 1099s are ready at year-end.</p></div>
           </div>
         </div>
       </section>
@@ -210,17 +212,17 @@ export default function LandingPage() {
       {/* PRICING / CONTACT */}
       <section id="pricing" className="lp-section">
         <div className="lp-wrap">
-          <div className="lp-kicker">Pricing</div>
-          <h2 className="lp-h2">Pricing built around your brokerage</h2>
-          <p className="lp-lead">Every brokerage runs differently. Tell us about yours and we’ll tailor a plan, or see SplitKey live on your own numbers in a quick demo.</p>
+          <div className="lp-kicker" data-reveal>Pricing</div>
+          <h2 className="lp-h2" data-reveal style={{ ["--d" as any]: "70ms" }}>Pricing built around your brokerage</h2>
+          <p className="lp-lead" data-reveal style={{ ["--d" as any]: "140ms" }}>Every brokerage runs differently. Tell us about yours and we’ll tailor a plan, or see SplitKey live on your own numbers in a quick demo.</p>
           <div className="lp-contact">
-            <div className="lp-contact-card">
+            <div className="lp-contact-card" data-reveal>
               <div className="lp-ico">{mailIcon}</div>
               <h3>Contact the team</h3>
               <p>Questions about features, onboarding, or a custom plan? We’ll get back to you fast.</p>
               <a className="lp-btn lp-btn-ghost" href={CONTACT_HREF}>Email the team</a>
             </div>
-            <div className="lp-contact-card pop">
+            <div className="lp-contact-card pop" data-reveal>
               <div className="lp-ico">{calIcon}</div>
               <h3>Schedule a demo</h3>
               <p>See it in 20 minutes. Splits, reports, AI, and 1099s walked through end to end.</p>
@@ -232,7 +234,7 @@ export default function LandingPage() {
 
       {/* CTA */}
       <section className="lp-wrap" style={{ paddingBottom: 8 }}>
-        <div className="lp-cta">
+        <div className="lp-cta" data-reveal>
           <h2>Ready to settle every commission clean?</h2>
           <p>Join brokerages running their entire commission operation on SplitKey.</p>
           <Link href="/login" className="lp-btn lp-btn-white lp-btn-lg">Get started free →</Link>
