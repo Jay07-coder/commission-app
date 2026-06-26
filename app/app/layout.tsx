@@ -51,7 +51,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </Link>
         <div className="sub" style={{ marginLeft: 4 }}>{ctx.brokerageName} · {ROLE_LABEL[ctx.role] || ctx.role}</div>
         <nav className="tabs">
-          <NavTabs canManageTeam={canManageTeam} />
+          <NavTabs canManageTeam={canManageTeam} role={ctx.role} />
           <form action={signOut} style={{ display: "inline" }}><button type="submit">Sign out</button></form>
         </nav>
       </header>
