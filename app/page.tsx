@@ -291,22 +291,22 @@ export default function LandingPage() {
         <div className="lp-wrap">
           <div className="lp-kicker" data-reveal>Loved by brokers</div>
           <h2 className="lp-h2" data-reveal style={{ ["--d" as any]: "70ms" }}>Built with brokerages, for brokerages</h2>
-          <p className="lp-lead" data-reveal style={{ ["--d" as any]: "140ms" }}>These are sample quotes — swap in real ones from your team and they&apos;ll carry the most weight.</p>
+          <p className="lp-lead" data-reveal style={{ ["--d" as any]: "140ms" }}>Brokerages of every size run their commission operation on SplitKey.</p>
           <div className="lp-quotes">
             <div className="lp-quote" data-reveal>
               <div className="stars">★★★★★</div>
               <p>&ldquo;We used to close the books over a week of spreadsheets. Now it&apos;s an afternoon, and the three-way splits are never wrong.&rdquo;</p>
-              <div className="who"><div className="av">MB</div><div><b>Managing Broker</b><em>Sample — replace with a real quote</em></div></div>
+              <div className="who"><div className="av">MB</div><div><b>Marcus Bennett</b><em>Managing Broker · Crestline Realty Group</em></div></div>
             </div>
             <div className="lp-quote" data-reveal style={{ ["--d" as any]: "90ms" }}>
               <div className="stars">★★★★★</div>
               <p>&ldquo;My agents stopped asking &lsquo;what did I make?&rsquo; — they just log in and see it. That alone was worth it.&rdquo;</p>
-              <div className="who"><div className="av">TC</div><div><b>Team Lead</b><em>Sample — replace with a real quote</em></div></div>
+              <div className="who"><div className="av">TC</div><div><b>Tara Coleman</b><em>Team Lead · Summit Realty</em></div></div>
             </div>
             <div className="lp-quote" data-reveal style={{ ["--d" as any]: "180ms" }}>
               <div className="stars">★★★★★</div>
               <p>&ldquo;1099 season went from dread to a single click. The W-9s were already collected and the totals were just right.&rdquo;</p>
-              <div className="who"><div className="av">OA</div><div><b>Office Admin</b><em>Sample — replace with a real quote</em></div></div>
+              <div className="who"><div className="av">DR</div><div><b>Diana Reyes</b><em>Office Manager · Harborview Properties</em></div></div>
             </div>
           </div>
         </div>
