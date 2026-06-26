@@ -8,11 +8,15 @@ const BASE = [
   { href: "/app/agents", label: "Agents" },
 ];
 
-export default function NavTabs({ canManageTeam = false }: { canManageTeam?: boolean }) {
+export default function NavTabs({ canManageTeam = false, role = "" }: { canManageTeam?: boolean; role?: string }) {
   const path = usePathname();
-  const tabs = canManageTeam
-    ? [...BASE, { href: "/app/reports", label: "Reports" }, { href: "/app/map", label: "Map" }, { href: "/app/team", label: "Team" }]
-    : BASE;
+  const PORTAL = { href: "/app/me", label: "My Portal" };
+  const tabs =
+    role === "agent"
+      ? [PORTAL]
+      : canManageTeam
+        ? [...BASE, { href: "/app/reports", label: "Reports" }, { href: "/app/map", label: "Map" }, PORTAL, { href: "/app/team", label: "Team" }]
+        : [...BASE, PORTAL];
   return (
     <>
       {tabs.map((t) => (
