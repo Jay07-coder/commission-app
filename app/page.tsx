@@ -15,14 +15,14 @@ const I = {
 const check = <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4"><path d="M20 6L9 17l-5-5"/></svg>;
 
 const FEATURES = [
-  { ic: I.calc, t: "Exact commission splits", b: "Agent, brokerage, and partner splits with caps, royalties, referral fees, and deductions all handled automatically — no spreadsheet math." },
+  { ic: I.calc, t: "Exact commission splits", b: "Agent, brokerage, and partner splits with caps, royalties, referral fees, and deductions all handled automatically. No spreadsheet math." },
   { ic: I.board, t: "Deal board & approvals", b: "Track every deal from draft to close with built-in broker sign-off and automatic email notifications at each step." },
-  { ic: I.chart, t: "Reports & KPIs", b: "Live dashboards for gross, net, top agents, lead sources, and geography — filter by period and source in a click." },
-  { ic: I.ai, t: "AI copilot", b: "A built-in assistant that answers questions in plain English — “show me KPIs for this agent” — grounded in your live data." },
+  { ic: I.chart, t: "Reports & KPIs", b: "Live dashboards for gross, net, top agents, lead sources, and geography. Filter by period and source in a click." },
+  { ic: I.ai, t: "AI copilot", b: "A built-in assistant that answers questions in plain English, like “show me KPIs for this agent,” grounded in your live data." },
   { ic: I.map, t: "Zillow zip targeting + map", b: "Automatically pull zip codes from lead sources and visualize target areas on a live map for smarter ad spend." },
-  { ic: I.portal, t: "Agent self-serve portal", b: "Agents log in to see their own deals, earnings, and cap progress — no more fielding “what did I make?” questions." },
-  { ic: I.doc, t: "1099 & W-9 suite", b: "Agents self-onboard their W-9 and SplitKey tallies year-end 1099-NEC totals automatically — even for agents who’ve left." },
-  { ic: I.shield, t: "Roles & bank-grade security", b: "Owner, broker, coordinator, accountant, and agent roles — each with the right access — and full per-brokerage data isolation." },
+  { ic: I.portal, t: "Agent self-serve portal", b: "Agents log in to see their own deals, earnings, and cap progress. No more fielding “what did I make?” questions." },
+  { ic: I.doc, t: "1099 & W-9 suite", b: "Agents self-onboard their W-9 and SplitKey tallies year-end 1099-NEC totals automatically, even for agents who’ve left." },
+  { ic: I.shield, t: "Roles & bank-grade security", b: "Owner, broker, coordinator, accountant, and agent roles, each with the right access, plus full per-brokerage data isolation." },
 ];
 
 // 👉 Paste your Calendly link here when ready (e.g. "https://calendly.com/your-handle/demo").
@@ -59,7 +59,7 @@ export default function LandingPage() {
           <span className="lp-eyebrow">★ Built for real-estate brokerages</span>
           <h1 className="lp-h1">Run every commission like clockwork.</h1>
           <p className="lp-sub">
-            SplitKey is the all-in-one commission platform for brokerages — calculate splits, route approvals,
+            SplitKey is the all-in-one commission platform for brokerages. Calculate splits, route approvals,
             pay agents, and file 1099s, all in one place.
           </p>
           <div className="lp-hero-cta">
@@ -107,7 +107,7 @@ export default function LandingPage() {
         <div className="lp-wrap">
           <div className="lp-kicker">Everything in one place</div>
           <h2 className="lp-h2">One platform for the entire commission lifecycle</h2>
-          <p className="lp-lead">From the moment a deal is written to the day you file 1099s — SplitKey handles it.</p>
+          <p className="lp-lead">From the moment a deal is written to the day you file 1099s, SplitKey handles it.</p>
           <div className="lp-grid">
             {FEATURES.map((f) => (
               <div className="lp-feat" key={f.t}>
@@ -126,7 +126,7 @@ export default function LandingPage() {
           <div>
             <div className="lp-kicker" style={{ textAlign: "left" }}>AI copilot</div>
             <h3>Ask your brokerage anything.</h3>
-            <p>Stop digging through reports. Ask in plain English and get an answer grounded in your live data — instantly.</p>
+            <p>Stop digging through reports. Ask in plain English and get an answer grounded in your live data, instantly.</p>
             <ul>
               <li>{check}<span>“Show me KPIs for Laith this year”</span></li>
               <li>{check}<span>“Which lead source has the best ROI?”</span></li>
@@ -152,12 +152,12 @@ export default function LandingPage() {
                 <span key={i} className={c} />
               ))}
             </div>
-            <p style={{ margin: "14px 0 0", fontSize: 12.5, color: "#64748b" }}>Deal density by zip — darker = more deals</p>
+            <p style={{ margin: "14px 0 0", fontSize: 12.5, color: "#64748b" }}>Deal density by zip. Darker means more deals.</p>
           </div>
           <div>
             <div className="lp-kicker" style={{ textAlign: "left" }}>Geographic intelligence</div>
             <h3>See exactly where your deals come from.</h3>
-            <p>SplitKey reads zip codes straight out of your Zillow lead sources and maps them, so you know where to double down — and where to pull back.</p>
+            <p>SplitKey reads zip codes straight out of your Zillow lead sources and maps them, so you know where to double down, and where to pull back.</p>
             <ul>
               <li>{check}<span>Automatic zip extraction from lead sources</span></li>
               <li>{check}<span>Live heat-style map of your target areas</span></li>
@@ -173,7 +173,7 @@ export default function LandingPage() {
           <div>
             <div className="lp-kicker" style={{ textAlign: "left" }}>Tax season, sorted</div>
             <h3>1099s that practically file themselves.</h3>
-            <p>Agents onboard their own W-9 when they join. SplitKey tracks every dollar paid and tallies year-end 1099-NEC totals — automatically, even for agents who’ve moved on.</p>
+            <p>Agents onboard their own W-9 when they join. SplitKey tracks every dollar paid and tallies year-end 1099-NEC totals automatically, even for agents who’ve moved on.</p>
             <ul>
               <li>{check}<span>Agent W-9 self-onboarding at signup</span></li>
               <li>{check}<span>Automatic $600-threshold flagging</span></li>
@@ -210,7 +210,7 @@ export default function LandingPage() {
         <div className="lp-wrap">
           <div className="lp-kicker">Pricing</div>
           <h2 className="lp-h2">Pricing built around your brokerage</h2>
-          <p className="lp-lead">Every brokerage runs differently. Tell us about yours and we’ll tailor a plan — or see SplitKey live on your own numbers in a quick demo.</p>
+          <p className="lp-lead">Every brokerage runs differently. Tell us about yours and we’ll tailor a plan, or see SplitKey live on your own numbers in a quick demo.</p>
           <div className="lp-contact">
             <div className="lp-contact-card">
               <div className="lp-ico">{mailIcon}</div>
@@ -221,7 +221,7 @@ export default function LandingPage() {
             <div className="lp-contact-card pop">
               <div className="lp-ico">{calIcon}</div>
               <h3>Schedule a demo</h3>
-              <p>See it in 20 minutes — splits, reports, AI, and 1099s walked through end to end.</p>
+              <p>See it in 20 minutes. Splits, reports, AI, and 1099s walked through end to end.</p>
               <a className="lp-btn lp-btn-primary" href={DEMO_HREF} {...(CALENDLY_URL ? { target: "_blank", rel: "noopener noreferrer" } : {})}>Book a demo</a>
             </div>
           </div>
