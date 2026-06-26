@@ -92,9 +92,9 @@ export default function Scene3D() {
 
       const group = new THREE.Group();
       const wide = W() > 900;
-      group.position.x = wide ? 2.3 : 0;
-      group.position.y = wide ? 0.2 : 1.6;
-      group.scale.setScalar(wide ? 1 : 0.8);
+      group.position.x = wide ? 3.6 : 0;
+      group.position.y = wide ? 0.5 : 1.7;
+      group.scale.setScalar(wide ? 0.86 : 0.6);
 
       // glass frame + dashboard
       const frame = new THREE.Mesh(
@@ -116,7 +116,7 @@ export default function Scene3D() {
           new THREE.PlaneGeometry(1.7, 0.95),
           new THREE.MeshStandardMaterial({ map: cardTexture(THREE, d[0], d[1], d[2]), transparent: true, roughness: 0.35 })
         );
-        m.userData = { ang: (i / cfg.length) * Math.PI * 2, r: 3.7, ry: 2.4, spd: 0.07 * (i % 2 ? 1 : -1), bob: Math.random() * 6 };
+        m.userData = { ang: (i / cfg.length) * Math.PI * 2, r: 2.6, ry: 1.7, spd: 0.07 * (i % 2 ? 1 : -1), bob: Math.random() * 6 };
         cards.push(m); group.add(m);
       });
       scene.add(group);
