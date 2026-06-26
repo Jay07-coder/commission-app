@@ -149,6 +149,43 @@ export async function getMyAgent(): Promise<MyAgent | null> {
   };
 }
 
+export interface TaxProfile {
+  legal_name: string; business_name: string; classification: string;
+  tin_type: string; tin: string;
+  address1: string; address2: string; city: string; state: string; zip: string;
+  signed_name: string; signed_at: string | null;
+}
+
+/** The signed-in user's own W-9 / tax profile, or null if not started. Works even while pending. */
+export async function getMyTaxProfile(): Promise<TaxProfile | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase
+    .from("agent_tax_profiles")
+    .select("legal_name, business_name, classification, tin_type, tin, address1, address2, city, state, zip, signed_name, signed_at")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!data) return null;
+  const r = data as Partial<TaxProfile>;
+  return {
+    legal_name: r.legal_name ?? "", business_name: r.business_name ?? "", classification: r.classification ?? "",
+    tin_type: r.tin_type ?? "", tin: r.tin ?? "",
+    address1: r.address1 ?? "", address2: r.address2 ?? "", city: r.city ?? "", state: r.state ?? "", zip: r.zip ?? "",
+    signed_name: r.signed_name ?? "", signed_at: r.signed_at ?? null,
+  };
+}
+
+/** Lowercased emails that have a completed W-9 — admin use, to flag who's on file. */
+export async function getTaxProfileEmails(): Promise<Set<string>> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("agent_tax_profiles")
+    .select("email, signed_at");
+  const rows = (data as { email: string | null; signed_at: string | null }[] | null) ?? [];
+  return new Set(rows.filter((r) => r.signed_at && r.email).map((r) => r.email!.toLowerCase()));
+}
+
 /** Look up an agent by name — used by admins to view any agent's portal. */
 export async function getAgentByName(name: string): Promise<MyAgent | null> {
   const supabase = await createClient();
