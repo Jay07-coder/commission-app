@@ -29,7 +29,7 @@ const FEATURES = [
 
 // 👉 Paste your Calendly link here when ready (e.g. "https://calendly.com/your-handle/demo").
 // Until then, "Book a demo" opens an email to request one.
-const CALENDLY_URL = "";
+const CALENDLY_URL = "https://calendly.com/jay-topagentmi/splitkey-demo-call";
 const CONTACT_HREF = "mailto:jay@topagentmi.com?subject=SplitKey%20inquiry";
 const DEMO_HREF = CALENDLY_URL || "mailto:jay@topagentmi.com?subject=SplitKey%20demo%20request";
 
