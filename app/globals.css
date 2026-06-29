@@ -376,6 +376,24 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:va
 .legal strong{color:var(--ink)}
 
 /* ============================================================
+   In-app responsive pass (logged-in screens)
+   ============================================================ */
+@media(max-width:760px){
+  .appbar{flex-wrap:wrap;padding:11px 14px;gap:10px}
+  .appbar .sub{width:100%;order:3}
+  .tabs{margin-left:0;width:100%;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;
+    padding-bottom:3px;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs a,.tabs button{white-space:nowrap;flex:0 0 auto}
+  main{padding:16px 14px}
+  .grid{grid-template-columns:1fr}
+  .row{flex-direction:column;gap:0}
+  .kpis{flex-direction:column}
+  .card{overflow-x:auto}        /* wide tables scroll inside their card instead of breaking the page */
+  .stmt{padding:18px}
+}
+
+/* ============================================================
    ELITE animated graphics
    ============================================================ */
 @property --lpa{syntax:"<angle>";inherits:false;initial-value:0deg}
