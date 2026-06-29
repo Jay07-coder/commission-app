@@ -168,9 +168,10 @@ export async function getMyTaxProfile(): Promise<TaxProfile | null> {
     .maybeSingle();
   if (!data) return null;
   const r = data as Partial<TaxProfile>;
+  const { data: tinPlain } = await supabase.rpc("my_tin"); // decrypt own TIN
   return {
     legal_name: r.legal_name ?? "", business_name: r.business_name ?? "", classification: r.classification ?? "",
-    tin_type: r.tin_type ?? "", tin: r.tin ?? "",
+    tin_type: r.tin_type ?? "", tin: (tinPlain as string | null) ?? "",
     address1: r.address1 ?? "", address2: r.address2 ?? "", city: r.city ?? "", state: r.state ?? "", zip: r.zip ?? "",
     signed_name: r.signed_name ?? "", signed_at: r.signed_at ?? null,
   };
@@ -188,9 +189,10 @@ export async function getTaxProfileByEmail(email: string): Promise<TaxProfile | 
     .maybeSingle();
   if (!data) return null;
   const r = data as Partial<TaxProfile>;
+  const { data: tinPlain } = await supabase.rpc("tin_for_email", { p_email: email }); // admin-decrypt
   return {
     legal_name: r.legal_name ?? "", business_name: r.business_name ?? "", classification: r.classification ?? "",
-    tin_type: r.tin_type ?? "", tin: r.tin ?? "",
+    tin_type: r.tin_type ?? "", tin: (tinPlain as string | null) ?? "",
     address1: r.address1 ?? "", address2: r.address2 ?? "", city: r.city ?? "", state: r.state ?? "", zip: r.zip ?? "",
     signed_name: r.signed_name ?? "", signed_at: r.signed_at ?? null,
   };
