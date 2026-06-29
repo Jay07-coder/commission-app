@@ -68,6 +68,7 @@ export default function TaxSummary({ deals, w9Names = [] }: { deals: Txn[]; w9Na
                 <th style={{ ...th, textAlign: "right" }}>Box 1 — paid</th>
                 <th style={{ ...th, textAlign: "center" }}>1099 required?</th>
                 <th style={{ ...th, textAlign: "center" }}>W-9 on file?</th>
+                <th style={{ ...th, textAlign: "center" }}>1099 form</th>
               </tr>
             </thead>
             <tbody>
@@ -87,6 +88,11 @@ export default function TaxSummary({ deals, w9Names = [] }: { deals: Txn[]; w9Na
                       : r.total >= THRESHOLD
                         ? <span className="pill" style={{ background: "#fef2f2", color: "#b91c1c" }}>Missing</span>
                         : <span className="muted">—</span>}
+                  </td>
+                  <td style={{ ...td, textAlign: "center" }}>
+                    {w9Set.has(r.agent) && r.total >= THRESHOLD
+                      ? <a className="btn ghost sm" href={`/app/tax/print?year=${year}&agent=${encodeURIComponent(r.agent)}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>Generate →</a>
+                      : <span className="muted">—</span>}
                   </td>
                 </tr>
               ))}
