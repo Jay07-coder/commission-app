@@ -176,6 +176,26 @@ export async function getMyTaxProfile(): Promise<TaxProfile | null> {
   };
 }
 
+/** An agent's W-9 profile by email — admins (owner/broker) can read their brokerage's. */
+export async function getTaxProfileByEmail(email: string): Promise<TaxProfile | null> {
+  if (!email) return null;
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("agent_tax_profiles")
+    .select("legal_name, business_name, classification, tin_type, tin, address1, address2, city, state, zip, signed_name, signed_at")
+    .ilike("email", email)
+    .limit(1)
+    .maybeSingle();
+  if (!data) return null;
+  const r = data as Partial<TaxProfile>;
+  return {
+    legal_name: r.legal_name ?? "", business_name: r.business_name ?? "", classification: r.classification ?? "",
+    tin_type: r.tin_type ?? "", tin: r.tin ?? "",
+    address1: r.address1 ?? "", address2: r.address2 ?? "", city: r.city ?? "", state: r.state ?? "", zip: r.zip ?? "",
+    signed_name: r.signed_name ?? "", signed_at: r.signed_at ?? null,
+  };
+}
+
 /** Lowercased emails that have a completed W-9 — admin use, to flag who's on file. */
 export async function getTaxProfileEmails(): Promise<Set<string>> {
   const supabase = await createClient();
