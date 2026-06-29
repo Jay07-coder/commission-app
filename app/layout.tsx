@@ -1,6 +1,7 @@
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import PWARegister from "@/components/PWARegister";
 
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
 
@@ -20,12 +21,21 @@ export const metadata: Metadata = {
     url: "https://app.topagentmi.com",
   },
   twitter: { card: "summary_large_image", title: "SplitKey — Commission management for brokerages" },
+  appleWebApp: { capable: true, title: "SplitKey", statusBarStyle: "black-translucent" },
+  icons: { icon: "/icon-192.png", apple: "/apple-touch-icon.png" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f2440",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body>{children}</body>
+      <body>{children}<PWARegister /></body>
     </html>
   );
 }
